@@ -1,0 +1,9 @@
+Wed, 20 Apr 2011 08:58:07 +0300
+doc/README_FOR_APP	Wed, 20 Apr 2011 08:39:41 +0300
+app/models/message.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/helpers/application_helper.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/helpers/messages_helper.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/helpers/error_messages_helper.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/helpers/layout_helper.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/controllers/application_controller.rb	Wed, 20 Apr 2011 08:39:41 +0300
+app/controllers/messages_controller.rb	Wed, 20 Apr 2011 08:39:41 +0300
