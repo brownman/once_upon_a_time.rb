@@ -1,0 +1,55 @@
+ 
+
+<audio id="audio" autobuffer="">
+<source src="audios/1.ogg" type="audio/ogg; codecs=vorbis"> 
+</audio>
+<div id='idofer'> 
+  <script type="text/javascript" >
+    function message(content,id,parent_id)
+{
+  this.content=content;
+  this.id=id;
+  this.parent_id=parent_id;
+  this.position=null;
+}
+
+
+//employee.prototype.salary=null;
+//fred.salary=new Number(20000);
+//var str1= (fred.salary).toString();
+//var ofer1 = new Number(0);
+var content;
+var id;
+var parent_id;
+
+    var aOfer = [];
+    var counter=0;
+    <% @messages.each do |message| %>
+      content =   '<%=  escape_javascript( message.content.chop) %>' ;
+       
+      id =   <%=   message.id.to_i %> ;
+      parent_id  =   <%=  0 | message.parent_id.to_i %>  ;
+      
+var m=new message(content,id,parent_id);
+      
+      console.log(m);
+      aOfer.push(m);
+      console.log(aOfer[counter].toString()  );
+
+
+      counter= counter+1;
+    <% end %>
+
+    init();
+    </script>
+  </div>
+
+
+  <div id="launcher" style="padding-top: 100px; text-align: center">
+
+    <span style="cursor:pointer" onclick="start( 0 );">START</span>
+
+  </div>
+
+
+ 

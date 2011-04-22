@@ -1,5 +1,43 @@
-<% title "Messages" %>
+ <% title "Messages" %>
+
+<%= render "jstuff" %> 
+<div id="railstuff1">
+  
+
 
 <%= nested_messages @messages.arrange(:order => :created_at) %>
 
 <%= render "form" %>
+
+
+
+<h1>Listing messages</h1>
+
+<table>
+  <tr>
+    
+    <th>Content</th>
+    <th>id</th>
+    <th>parent_id</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  <% @messages.each do |message| %>
+    <tr>
+
+      <td><%= message.content %></td>
+      <td><%= message.id %></td>
+      <td><%= message.parent_id %></td>
+      <td><%= link_to 'Show', message %></td>
+      <td><%= link_to 'Edit', edit_message_path(message) %></td>
+      <td><%= link_to 'Destroy', message, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+
+  </div>
+
+
