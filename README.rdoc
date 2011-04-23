@@ -1,7 +1,17 @@
-= Railscasts Example Application
+todo:
+
+- add rspec 
+- add users resource
+- create user-messages relations
+-
+- 
+- use content_for
+
 
 Run these commands to try it out.
 
   bundle
   rake db:migrate
   rails s
+
+
