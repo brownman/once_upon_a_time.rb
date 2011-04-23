@@ -3,7 +3,7 @@
 <audio id="audio" autobuffer="">
 <source src="audios/1.ogg" type="audio/ogg; codecs=vorbis"> 
 </audio>
-<div id='idofer'> 
+ 
   <script type="text/javascript" >
     function message(content,id,parent_id)
 {
@@ -21,6 +21,7 @@
 var content;
 var id;
 var parent_id;
+ var m;
 
     var aOfer = [];
     var counter=0;
@@ -30,7 +31,7 @@ var parent_id;
       id =   <%=   message.id.to_i %> ;
       parent_id  =   <%=  0 | message.parent_id.to_i %>  ;
       
-var m=new message(content,id,parent_id);
+m=new message(content,id,parent_id);
       
       console.log(m);
       aOfer.push(m);
@@ -42,7 +43,7 @@ var m=new message(content,id,parent_id);
 
     init();
     </script>
-  </div>
+
 
 
   <div id="launcher" style="padding-top: 100px; text-align: center">
