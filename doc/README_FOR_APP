@@ -1,2 +1,16 @@
 Use this README file to introduce your application and point to useful places in the API for learning more.
 Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+
+
+
+best practive advices:
+------------------------
+
+
+1. use default layout - unless implemented content_for::
+
+  <div id="head"><%= content_for?(:head) ? yield(:head) : yield %></div>
+
+2.      api.rails.content_for
+http://api.rubyonrails.org/classes/ActionView/Helpers/CaptureHelper.html#M001763
+

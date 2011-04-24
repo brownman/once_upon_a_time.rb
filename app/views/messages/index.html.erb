@@ -1,43 +1,74 @@
- <% title "Messages" %>
+<% content_for :head do %>
+  <%= render "style1" %>
+  <%= javascript_include_tag     'js/libs/ThreeCanvas.js',
+    'js/libs/three/extras/ImageUtils.js',
 
-<%= render "jstuff" %> 
-<div id="railstuff1">
-  
+    'js/geometry/Sphere.js',
+    'js/geometry/Plane.js',
+    'js/geometry/Asteroid.js',
+
+    'js/Sequencer.js',
+    'js/effects/Effect.js',
+    'js/effects/Part1Effect.js',
+    'js/effects/Part2Effect.js',
+    'js/effects/Part3Effect.js',
+    'js/effects/Part4Effect.js',
+    'js/effects/Part5Effect.js',
+    'js/effects/Part6Effect.js',
+    'js/effects/Part7Effect.js',
+    'js/effects/Part8Effect.js',
+    'js/effects/ClearEffect.js',
+    'js/effects/FadeInEffect.js',
+    'js/effects/FadeOutEffect.js',
+    'js/Main.js'
+  %>
+<% end %>
+
+<% content_for :body do %>
 
 
-<%= nested_messages @messages.arrange(:order => :created_at) %>
-
-<%= render "form" %>
 
 
+  <% title "Messages" %>
 
-<h1>Listing messages</h1>
+  <%= render "jstuff" %> 
 
-<table>
-  <tr>
-    
-    <th>Content</th>
-    <th>id</th>
-    <th>parent_id</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
 
-  <% @messages.each do |message| %>
-    <tr>
+  <div id='railstuff1' >
 
-      <td><%= message.content %></td>
-      <td><%= message.id %></td>
-      <td><%= message.parent_id %></td>
-      <td><%= link_to 'Show', message %></td>
-      <td><%= link_to 'Edit', edit_message_path(message) %></td>
-      <td><%= link_to 'Destroy', message, :confirm => 'Are you sure?', :method => :delete %></td>
-    </tr>
-  <% end %>
-</table>
+    <%= nested_messages @messages.arrange(:order => :created_at) %>
 
+    <%= render "form" %>
+
+
+
+    <h1>Listing messages</h1>
+
+    <table>
+      <tr>
+
+        <th>Content</th>
+        <th>id</th>
+        <th>parent_id</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+
+      <% @messages.each do |message| %>
+        <tr>
+
+          <td><%= message.content %></td>
+          <td><%= message.id %></td>
+          <td><%= message.parent_id %></td>
+          <td><%= link_to 'Show', message %></td>
+          <td><%= link_to 'Edit', edit_message_path(message) %></td>
+          <td><%= link_to 'Destroy', message, :confirm => 'Are you sure?', :method => :delete %></td>
+        </tr>
+      <% end %>
+    </table>
 
   </div>
 
 
+<% end %>
