@@ -2,8 +2,9 @@ source 'http://rubygems.org'
 
 gem 'rails'
 gem 'sqlite3'
-gem 'sqlite3-ruby'
+#gem 'sqlite3-ruby'
 
+gem 'sqlite3-ruby', '1.3.2', :group => :development
 
 
 gem 'ancestry'
@@ -30,6 +31,7 @@ group :development do
 gem 'nifty-generators'
 gem 'ruby-debug-ide19'
 gem "ruby-debug19"
+
 #gem 'sqlite3-ruby', '1.3.2', :group => :development
 end
 
