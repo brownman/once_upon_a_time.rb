@@ -40,7 +40,7 @@ describe PagesController do
   describe "GET 'about'" do
     it "should be successful" do
       get 'about'
-ap       response
+#ap       response
       response.should be_success
     end
 
