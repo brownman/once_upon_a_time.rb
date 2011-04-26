@@ -41019,3 +41019,150 @@ Rendered messages/_message.html.erb (17.5ms)
 Rendered messages/_form.html.erb (7.6ms)
 Rendered messages/index.html.erb within layouts/messages (231.4ms)
 Completed 200 OK in 517ms (Views: 260.8ms | ActiveRecord: 13.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2011-04-26 19:40:29 +0300
+  Processing by MessagesController#index as HTML
+  [1m[36mMessage Load (2.8ms)[0m  [1mSELECT "messages".* FROM "messages" LIMIT 1[0m
+  [1m[35mSQL (0.8ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mMessage Load (1.1ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mMessage Load (0.6ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'[0m
+  [1m[35mMessage Load (0.7ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'
+  [1m[36mMessage Load (0.5ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'[0m
+  [1m[35mMessage Load (0.5ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'
+  [1m[36mMessage Load (0.6ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'[0m
+  [1m[35mMessage Load (0.5ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'
+Rendered messages/_style1.html.erb (1.2ms)
+  [1m[36mMessage Load (3.5ms)[0m  [1mSELECT "messages".* FROM "messages"[0m
+Rendered messages/_jstuff.html.erb (10.1ms)
+Rendered messages/_example2.html.erb (2.1ms)
+  [1m[35mMessage Load (3.5ms)[0m  SELECT "messages".* FROM "messages" ORDER BY (case when messages.ancestry is null then 0 else 1 end), messages.ancestry, created_at
+Rendered messages/_message.html.erb (35.1ms)
+Rendered messages/_message.html.erb (6.2ms)
+Rendered messages/_message.html.erb (18.4ms)
+Rendered messages/_message.html.erb (9.7ms)
+Rendered messages/_message.html.erb (6.0ms)
+Rendered messages/_message.html.erb (5.7ms)
+Rendered messages/_message.html.erb (5.7ms)
+Rendered messages/_form.html.erb (12.5ms)
+Rendered messages/index.html.erb within layouts/messages (224.9ms)
+Completed 200 OK in 850ms (Views: 230.4ms | ActiveRecord: 15.1ms)
+
+
+Started GET "/" for 127.0.0.1 at 2011-04-26 19:40:31 +0300
+  Processing by MessagesController#index as 
+  [1m[36mMessage Load (2.3ms)[0m  [1mSELECT "messages".* FROM "messages" LIMIT 1[0m
+  [1m[35mMessage Load (0.8ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mMessage Load (0.6ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'
+  [1m[36mMessage Load (0.7ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'[0m
+  [1m[35mMessage Load (0.5ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'
+  [1m[36mMessage Load (1.6ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'[0m
+  [1m[35mMessage Load (0.6ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'
+  [1m[36mMessage Load (0.5ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'
+  [1m[36mCACHE (0.1ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'[0m
+Rendered messages/_style1.html.erb (5.6ms)
+  [1m[35mMessage Load (3.7ms)[0m  SELECT "messages".* FROM "messages"
+Rendered messages/_jstuff.html.erb (13.6ms)
+Rendered messages/_example2.html.erb (2.4ms)
+  [1m[36mMessage Load (3.8ms)[0m  [1mSELECT "messages".* FROM "messages" ORDER BY (case when messages.ancestry is null then 0 else 1 end), messages.ancestry, created_at[0m
+Rendered messages/_message.html.erb (9.9ms)
+Rendered messages/_message.html.erb (6.7ms)
+Rendered messages/_message.html.erb (10.0ms)
+Rendered messages/_message.html.erb (6.4ms)
+Rendered messages/_message.html.erb (7.8ms)
+Rendered messages/_message.html.erb (12.2ms)
+Rendered messages/_message.html.erb (6.3ms)
+Rendered messages/_form.html.erb (6.2ms)
+Rendered messages/index.html.erb within layouts/messages (371.2ms)
+Completed 200 OK in 608ms (Views: 408.6ms | ActiveRecord: 15.4ms)
+
+
+Started GET "/" for 127.0.0.1 at 2011-04-26 19:40:37 +0300
+  Processing by MessagesController#index as HTML
+  [1m[35mMessage Load (2.3ms)[0m  SELECT "messages".* FROM "messages" LIMIT 1
+  [1m[36mMessage Load (0.7ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mMessage Load (0.6ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'[0m
+  [1m[35mMessage Load (0.7ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'
+  [1m[36mMessage Load (0.5ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'[0m
+  [1m[35mMessage Load (0.6ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'
+  [1m[36mMessage Load (0.6ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'[0m
+  [1m[35mMessage Load (0.5ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'
+  [1m[36mCACHE (0.1ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'
+Rendered messages/_style1.html.erb (1.2ms)
+  [1m[36mMessage Load (3.5ms)[0m  [1mSELECT "messages".* FROM "messages"[0m
+Rendered messages/_jstuff.html.erb (9.9ms)
+Rendered messages/_example2.html.erb (2.2ms)
+  [1m[35mMessage Load (3.5ms)[0m  SELECT "messages".* FROM "messages" ORDER BY (case when messages.ancestry is null then 0 else 1 end), messages.ancestry, created_at
+Rendered messages/_message.html.erb (6.9ms)
+Rendered messages/_message.html.erb (10.9ms)
+Rendered messages/_message.html.erb (6.7ms)
+Rendered messages/_message.html.erb (7.6ms)
+Rendered messages/_message.html.erb (7.3ms)
+Rendered messages/_message.html.erb (8.1ms)
+Rendered messages/_message.html.erb (6.4ms)
+Rendered messages/_form.html.erb (6.6ms)
+Rendered messages/index.html.erb within layouts/messages (219.3ms)
+Completed 200 OK in 381ms (Views: 227.8ms | ActiveRecord: 13.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2011-04-26 19:40:38 +0300
+  Processing by MessagesController#index as 
+  [1m[36mMessage Load (3.7ms)[0m  [1mSELECT "messages".* FROM "messages" LIMIT 1[0m
+  [1m[35mMessage Load (1.2ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mMessage Load (0.6ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'
+  [1m[36mMessage Load (0.7ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'[0m
+  [1m[35mMessage Load (0.4ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'
+  [1m[36mMessage Load (0.4ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'[0m
+  [1m[35mMessage Load (0.6ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'
+  [1m[36mMessage Load (0.5ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/26'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/24/25/29'[0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT "messages".* FROM "messages" WHERE "messages"."ancestry" = '23/27/28'[0m
+Rendered messages/_style1.html.erb (1.2ms)
+  [1m[35mMessage Load (3.5ms)[0m  SELECT "messages".* FROM "messages"
+Rendered messages/_jstuff.html.erb (10.6ms)
+Rendered messages/_example2.html.erb (2.7ms)
+  [1m[36mMessage Load (109.6ms)[0m  [1mSELECT "messages".* FROM "messages" ORDER BY (case when messages.ancestry is null then 0 else 1 end), messages.ancestry, created_at[0m
+Rendered messages/_message.html.erb (18.7ms)
+Rendered messages/_message.html.erb (6.5ms)
+Rendered messages/_message.html.erb (6.1ms)
+Rendered messages/_message.html.erb (6.6ms)
+Rendered messages/_message.html.erb (6.6ms)
+Rendered messages/_message.html.erb (6.4ms)
+Rendered messages/_message.html.erb (6.6ms)
+Rendered messages/_form.html.erb (9.4ms)
+Rendered messages/index.html.erb within layouts/messages (343.0ms)
+Completed 200 OK in 616ms (Views: 263.9ms | ActiveRecord: 121.4ms)
