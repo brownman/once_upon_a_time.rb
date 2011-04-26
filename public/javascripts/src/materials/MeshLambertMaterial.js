@@ -4,95 +4,60 @@
  *
  * parameters = {
  *  color: <hex>,
+ *  opacity: <float>,
  *  map: new THREE.Texture( <Image> ),
- 
- *  env_map: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
+ *
+ *  lightMap: new THREE.Texture( <Image> ),
+ *
+ *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
  *  combine: THREE.Multiply,
  *  reflectivity: <float>,
- *  refraction_ratio: <float>,
- 
- *  opacity: <float>,
+ *  refractionRatio: <float>,
+ *
  *  shading: THREE.SmoothShading,
  *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *
  *  wireframe: <boolean>,
- *  wireframe_linewidth: <float>
+ *  wireframeLinewidth: <float>,
+ *
+ *  vertexColors: false / THREE.VertexColors / THREE.FaceColors,
+ *  skinning: <bool>
  * }
  */
 
 THREE.MeshLambertMaterial = function ( parameters ) {
 
-	this.id = THREE.MeshLambertMaterialCounter.value ++;
+	THREE.Material.call( this, parameters );
 
-	this.color = new THREE.Color( 0xffffff );
-	this.map = null;
+	parameters = parameters || {};
 
-	this.env_map = null;
-	this.combine = THREE.MultiplyOperation;
-	this.reflectivity = 1;
-	this.refraction_ratio = 0.98;
+	this.color = parameters.color !== undefined ? new THREE.Color( parameters.color ) : new THREE.Color( 0xffffff );
 
-	this.fog = true;
+	this.map = parameters.map !== undefined ? parameters.map : null;
 
-	this.opacity = 1;
-	this.shading = THREE.SmoothShading;
-	this.blending = THREE.NormalBlending;
+	this.lightMap = parameters.lightMap !== undefined ? parameters.lightMap : null;
 
-	this.wireframe = false;
-	this.wireframe_linewidth = 1;
-	this.wireframe_linecap = 'round';
-	this.wireframe_linejoin = 'round';
+	this.envMap = parameters.envMap !== undefined ? parameters.envMap : null;
+	this.combine = parameters.combine !== undefined ? parameters.combine : THREE.MultiplyOperation;
+	this.reflectivity = parameters.reflectivity !== undefined ? parameters.reflectivity : 1;
+	this.refractionRatio = parameters.refractionRatio !== undefined ? parameters.refractionRatio : 0.98;
 
-	if ( parameters ) {
+	// this.enableFog = parameters.enableFog ? parameters.enableFog : true;
 
-		if ( parameters.color !== undefined ) this.color.setHex( parameters.color );
-		if ( parameters.map !== undefined ) this.map = parameters.map;
+	this.shading = parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading;
 
-		if ( parameters.env_map !== undefined ) this.env_map = parameters.env_map;
-		if ( parameters.combine !== undefined ) this.combine = parameters.combine;
-		if ( parameters.reflectivity !== undefined ) this.reflectivity  = parameters.reflectivity;
-		if ( parameters.refraction_ratio !== undefined ) this.refraction_ratio  = parameters.refraction_ratio;
+	this.wireframe = parameters.wireframe !== undefined ? parameters.wireframe : false;
+	this.wireframeLinewidth = parameters.wireframeLinewidth !== undefined ? parameters.wireframeLinewidth : 1;
+	this.wireframeLinecap = parameters.wireframeLinecap !== undefined ? parameters.wireframeLinecap : 'round';
+	this.wireframeLinejoin = parameters.wireframeLinejoin !== undefined ? parameters.wireframeLinejoin : 'round';
 
-		if ( parameters.fog !== undefined ) this.fog  = parameters.fog;
+	this.vertexColors = parameters.vertexColors !== undefined ? parameters.vertexColors : false;
 
-		if ( parameters.opacity !== undefined ) this.opacity  = parameters.opacity;
-		if ( parameters.shading !== undefined ) this.shading = parameters.shading;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
-
-		if ( parameters.wireframe !== undefined ) this.wireframe = parameters.wireframe;
-		if ( parameters.wireframe_linewidth !== undefined ) this.wireframe_linewidth = parameters.wireframe_linewidth;
-		if ( parameters.wireframe_linecap !== undefined ) this.wireframe_linecap = parameters.wireframe_linecap;
-		if ( parameters.wireframe_linejoin !== undefined ) this.wireframe_linejoin = parameters.wireframe_linejoin;
-
-	}
+	this.skinning = parameters.skinning !== undefined ? parameters.skinning : false;
+	this.morphTargets = parameters.morphTargets !== undefined ? parameters.morphTargets : false;
 
 };
 
-THREE.MeshLambertMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.MeshLambertMaterial (<br/>' +
-			'id: ' + this.id + '<br/>' +
-			'color: ' + this.color + '<br/>' +
-			'map: ' + this.map + '<br/>' +
-
-			'env_map: ' + this.env_map + '<br/>' +
-			'combine: ' + this.combine + '<br/>' +
-			'reflectivity: ' + this.reflectivity + '<br/>' +
-			'refraction_ratio: ' + this.refraction_ratio + '<br/>' +
-
-			'opacity: ' + this.opacity + '<br/>' +
-			'shading: ' + this.shading + '<br/>' +
-			'blending: ' + this.blending + '<br/>' +
-
-			'wireframe: ' + this.wireframe + '<br/>' +
-			'wireframe_linewidth: ' + this.wireframe_linewidth +'<br/>' +
-			'wireframe_linecap: ' + this.wireframe_linecap +'<br/>' +
-			'wireframe_linejoin: ' + this.wireframe_linejoin +'<br/>' +
-			' )';
-
-	}
-
-};
-
-THREE.MeshLambertMaterialCounter = { value: 0 };
+THREE.MeshLambertMaterial.prototype = new THREE.Material();
+THREE.MeshLambertMaterial.prototype.constructor = THREE.MeshLambertMaterial;

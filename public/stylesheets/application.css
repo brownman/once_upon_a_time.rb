@@ -125,12 +125,14 @@ a {
 /****************************/
 /*      Forking ribbon      */
 /****************************/
-
-@font-face {
-  font-family: Collegiate;
-  src: url("/Collegiate.ttf");
-}
-
+/*
+ *
+ *@font-face {
+ *  font-family: Collegiate;
+ *  src: url("/Collegiate.ttf");
+ *}
+ *
+ */
 .myribbon {
   position: absolute;
   top: 0;
@@ -138,7 +140,7 @@ a {
   height: 12em;
   right: 0;
 }
-
+                                                                                   .
 .myribbon a, myribbon a:hover { text-decoration: none; }
 
 .myribbon a {

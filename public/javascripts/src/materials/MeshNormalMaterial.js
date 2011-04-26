@@ -3,33 +3,28 @@
  *
  * parameters = {
  *  opacity: <float>,
+ 
  *  shading: THREE.FlatShading,
- *  blending: THREE.NormalBlending
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ 
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>
  * }
  */
 
 THREE.MeshNormalMaterial = function ( parameters ) {
 
-	this.opacity = 1;
-	this.shading = THREE.FlatShading;
-	this.blending = THREE.NormalBlending;
+	THREE.Material.call( this, parameters );
 
-	if ( parameters ) {
+	parameters = parameters || {};
 
-		if ( parameters.opacity !== undefined ) this.opacity  = parameters.opacity;
-		if ( parameters.shading !== undefined ) this.shading  = parameters.shading;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
+	this.shading = parameters.shading ? parameters.shading : THREE.FlatShading;
 
-	}
+	this.wireframe = parameters.wireframe ? parameters.wireframe : false;
+	this.wireframeLinewidth = parameters.wireframeLinewidth ? parameters.wireframeLinewidth : 1;
 
 };
 
-THREE.MeshNormalMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.MeshNormalMaterial';
-
-	}
-
-};
+THREE.MeshNormalMaterial.prototype = new THREE.Material();
+THREE.MeshNormalMaterial.prototype.constructor = THREE.MeshNormalMaterial;

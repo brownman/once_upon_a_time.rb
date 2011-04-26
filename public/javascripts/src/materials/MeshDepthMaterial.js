@@ -1,38 +1,30 @@
 /**
  * @author mr.doob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
  *
  * parameters = {
  *  opacity: <float>,
- *  blending: THREE.NormalBlending
+ 
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ 
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>
  * } 
  */
 
 THREE.MeshDepthMaterial = function ( parameters ) {
 
-	this.opacity = 1;
-	this.shading = THREE.SmoothShading;
-	this.blending = THREE.NormalBlending;
+	THREE.Material.call( this, parameters );
 
-	this.wireframe = false;
-	this.wireframe_linewidth = 1;
-	this.wireframe_linecap = 'round';
-	this.wireframe_linejoin = 'round';
+	parameters = parameters || {};
 
-	if ( parameters ) {
+	this.shading = parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading; // doesn't really apply here, normals are not used
 
-		if ( parameters.opacity !== undefined ) this.opacity  = parameters.opacity;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
-
-	}
+	this.wireframe = parameters.wireframe !== undefined ? parameters.wireframe : false;
+	this.wireframeLinewidth = parameters.wireframeLinewidth !== undefined ? parameters.wireframeLinewidth : 1;
 
 };
 
-THREE.MeshDepthMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.MeshDepthMaterial';
-
-	}
-
-};
+THREE.MeshDepthMaterial.prototype = new THREE.Material();
+THREE.MeshDepthMaterial.prototype.constructor = THREE.MeshDepthMaterial;

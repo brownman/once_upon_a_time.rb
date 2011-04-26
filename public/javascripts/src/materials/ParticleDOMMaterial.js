@@ -4,17 +4,8 @@
 
 THREE.ParticleDOMMaterial = function ( domElement ) {
 
+	THREE.Material.call( this );
+
 	this.domElement = domElement;
-
-};
-
-
-THREE.ParticleDOMMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.ParticleDOMMaterial ( domElement: ' + this.domElement + ' )';
-
-	}
 
 };

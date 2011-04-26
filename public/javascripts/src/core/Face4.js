@@ -1,29 +1,25 @@
 /**
  * @author mr.doob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
  */
 
-THREE.Face4 = function ( a, b, c, d, normal, materials ) {
+THREE.Face4 = function ( a, b, c, d, normal, color, materials ) {
 
-	this.a = a;
+	this.a = a; 
 	this.b = b;
 	this.c = c;
 	this.d = d;
 
-	this.centroid = new THREE.Vector3();
 	this.normal = normal instanceof THREE.Vector3 ? normal : new THREE.Vector3();
-	this.vertexNormals = normal instanceof Array ? normal : [];
+	this.vertexNormals = normal instanceof Array ? normal : [ ];
+
+	this.color = color instanceof THREE.Color ? color : new THREE.Color();
+	this.vertexColors = color instanceof Array ? color : [];
+
+	this.vertexTangents = [];
 
 	this.materials = materials instanceof Array ? materials : [ materials ];
 
-};
-
-
-THREE.Face4.prototype = {
-
-	toString: function () {
-
-		return 'THREE.Face4 ( ' + this.a + ', ' + this.b + ', ' + this.c + ' ' + this.d + ' )';
-
-	}
+	this.centroid = new THREE.Vector3();
 
 };

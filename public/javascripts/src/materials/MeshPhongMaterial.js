@@ -7,111 +7,64 @@
  *  ambient: <hex>,
  *  specular: <hex>,
  *  shininess: <float>,
-
+ *  opacity: <float>,
+ *
  *  map: new THREE.Texture( <Image> ),
- *  specular_map: new THREE.Texture( <Image> ),
-
- *  env_map: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
+ *
+ *  lightMap: new THREE.Texture( <Image> ),
+ *
+ *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
  *  combine: THREE.Multiply,
  *  reflectivity: <float>,
- *  refraction_ratio: <float>,
-
- *  opacity: <float>,
+ *  refractionRatio: <float>,
+ *
  *  shading: THREE.SmoothShading,
  *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *
  *  wireframe: <boolean>,
- *  wireframe_linewidth: <float>
+ *  wireframeLinewidth: <float>,
+ *
+ *  vertexColors: false / THREE.VertexColors / THREE.FaceColors,
+ *  skinning: <bool>
  * }
  */
 
 THREE.MeshPhongMaterial = function ( parameters ) {
 
-	this.id = THREE.MeshPhongMaterialCounter.value ++;
+	THREE.Material.call( this, parameters );
 
-	this.color = new THREE.Color( 0xffffff );
-	this.ambient = new THREE.Color( 0x050505 );
-	this.specular = new THREE.Color( 0x111111 );
-	this.shininess = 30;
+	parameters = parameters || {};
 
-	this.map = null;
-	this.specular_map = null;
+	this.color = parameters.color !== undefined ? new THREE.Color( parameters.color ) : new THREE.Color( 0xffffff );
+	this.ambient = parameters.ambient !== undefined ? new THREE.Color( parameters.ambient ) : new THREE.Color( 0x050505 );
+	this.specular = parameters.specular !== undefined ? new THREE.Color( parameters.specular ) : new THREE.Color( 0x111111 );
+	this.shininess = parameters.shininess !== undefined ? parameters.shininess : 30;
 
-	this.env_map = null;
-	this.combine = THREE.MultiplyOperation;
-	this.reflectivity = 1;
-	this.refraction_ratio = 0.98;
+	this.map = parameters.map !== undefined ? parameters.map : null;
 
-	this.fog = true;
+	this.lightMap = parameters.lightMap !== undefined ? parameters.lightMap : null;
 
-	this.opacity = 1;
-	this.shading = THREE.SmoothShading;
-	this.blending = THREE.NormalBlending;
+	this.envMap = parameters.envMap !== undefined ? parameters.envMap : null;
+	this.combine = parameters.combine !== undefined ? parameters.combine : THREE.MultiplyOperation;
+	this.reflectivity = parameters.reflectivity !== undefined ? parameters.reflectivity : 1;
+	this.refractionRatio = parameters.refractionRatio !== undefined ? parameters.refractionRatio : 0.98;
 
-	this.wireframe = false;
-	this.wireframe_linewidth = 1;
-	this.wireframe_linecap = 'round';
-	this.wireframe_linejoin = 'round';
+	// this.enableFog = parameters.enableFog ? parameters.enableFog : true;
 
-	if ( parameters ) {
+	this.shading = parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading;
 
-		if ( parameters.color !== undefined ) this.color = new THREE.Color( parameters.color );
-		if ( parameters.ambient !== undefined ) this.ambient = new THREE.Color( parameters.ambient );
-		if ( parameters.specular !== undefined ) this.specular = new THREE.Color( parameters.specular );
-		if ( parameters.shininess !== undefined ) this.shininess = parameters.shininess;
+	this.wireframe = parameters.wireframe !== undefined ? parameters.wireframe : false;
+	this.wireframeLinewidth = parameters.wireframeLinewidth !== undefined ? parameters.wireframeLinewidth : 1;
+	this.wireframeLinecap = parameters.wireframeLinecap !== undefined ? parameters.wireframeLinecap : 'round';
+	this.wireframeLinejoin = parameters.wireframeLinejoin !== undefined ? parameters.wireframeLinejoin : 'round';
 
-		if ( parameters.map !== undefined ) this.map = parameters.map;
-		if ( parameters.specular_map !== undefined ) this.specular_map = parameters.specular_map;
+	this.vertexColors = parameters.vertexColors !== undefined ? parameters.vertexColors : false;
 
-		if ( parameters.env_map !== undefined ) this.env_map = parameters.env_map;
-		if ( parameters.combine !== undefined ) this.combine = parameters.combine;
-		if ( parameters.reflectivity !== undefined ) this.reflectivity  = parameters.reflectivity;
-		if ( parameters.refraction_ratio !== undefined ) this.refraction_ratio  = parameters.refraction_ratio;
-
-		if ( parameters.fog !== undefined ) this.fog  = parameters.fog;
-
-		if ( parameters.opacity !== undefined ) this.opacity = parameters.opacity;
-		if ( parameters.shading !== undefined ) this.shading = parameters.shading;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
-
-		if ( parameters.wireframe !== undefined ) this.wireframe = parameters.wireframe;
-		if ( parameters.wireframe_linewidth !== undefined ) this.wireframe_linewidth = parameters.wireframe_linewidth;
-		if ( parameters.wireframe_linecap !== undefined ) this.wireframe_linecap = parameters.wireframe_linecap;
-		if ( parameters.wireframe_linejoin !== undefined ) this.wireframe_linejoin = parameters.wireframe_linejoin;
-
-	}
+	this.skinning = parameters.skinning !== undefined ? parameters.skinning : false;
+	this.morphTargets = parameters.morphTargets !== undefined ? parameters.morphTargets : false;
 
 };
 
-THREE.MeshPhongMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.MeshPhongMaterial (<br/>' +
-			'id: ' + this.id + '<br/>' +
-			'color: ' + this.color + '<br/>' +
-			'ambient: ' + this.ambient + '<br/>' +
-			'specular: ' + this.specular + '<br/>' +
-			'shininess: ' + this.shininess + '<br/>' +
-
-			'map: ' + this.map + '<br/>' +
-			'specular_map: ' + this.specular_map + '<br/>' +
-
-			'env_map: ' + this.env_map + '<br/>' +
-			'combine: ' + this.combine + '<br/>' +
-			'reflectivity: ' + this.reflectivity + '<br/>' +
-			'refraction_ratio: ' + this.refraction_ratio + '<br/>' +
-
-			'opacity: ' + this.opacity + '<br/>' +
-			'shading: ' + this.shading + '<br/>' +
-
-			'wireframe: ' + this.wireframe + '<br/>' +
-			'wireframe_linewidth: ' + this.wireframe_linewidth + '<br/>' +
-			'wireframe_linecap: ' + this.wireframe_linecap +'<br/>' +
-			'wireframe_linejoin: ' + this.wireframe_linejoin +'<br/>' +
-			')';
-
-	}
-
-};
-
-THREE.MeshPhongMaterialCounter = { value: 0 };
+THREE.MeshPhongMaterial.prototype = new THREE.Material();
+THREE.MeshPhongMaterial.prototype.constructor = THREE.MeshPhongMaterial;

@@ -2,18 +2,31 @@
  * @author mr.doob / http://mrdoob.com/
  * @author kile / http://kile.stravaganza.org/
  * @author alteredq / http://alteredqualia.com/
+ * @author mikael emtinger / http://gomo.se/
  */
 
 THREE.Geometry = function () {
 
+	this.id = "Geometry" + THREE.GeometryIdCounter ++;
+
 	this.vertices = [];
+	this.colors = []; // one-to-one vertex colors, used in ParticleSystem, Line and Ribbon
+
 	this.faces = [];
-	this.uvs = [];
+
+	this.edges = [];
+
+	this.faceUvs = [[]];
+	this.faceVertexUvs = [[]];
+
+	this.morphTargets = [];
+	this.morphColors = [];
+
+	this.skinWeights = [];
+	this.skinIndices = [];
 
 	this.boundingBox = null;
 	this.boundingSphere = null;
-
-	this.geometryChunks = {};
 
 	this.hasTangents = false;
 
@@ -56,12 +69,14 @@ THREE.Geometry.prototype = {
 		var n, nl, v, vl, vertex, f, fl, face, vA, vB, vC,
 		cb = new THREE.Vector3(), ab = new THREE.Vector3();
 
+		/*
 		for ( v = 0, vl = this.vertices.length; v < vl; v ++ ) {
 
 			vertex = this.vertices[ v ];
 			vertex.normal.set( 0, 0, 0 );
 
 		}
+		*/
 
 		for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
@@ -71,7 +86,7 @@ THREE.Geometry.prototype = {
 
 				cb.set( 0, 0, 0 );
 
-				for ( n = 0, nl = face.normal.length; n < nl; n++ ) {
+				for ( n = 0, nl = face.vertexNormals.length; n < nl; n++ ) {
 
 					cb.addSelf( face.vertexNormals[n] );
 
@@ -117,18 +132,18 @@ THREE.Geometry.prototype = {
 
 		// create internal buffers for reuse when calling this method repeatedly
 		// (otherwise memory allocation / deallocation every frame is big resource hog)
-		
+
 		if ( this.__tmpVertices == undefined ) {
-			
+
 			this.__tmpVertices = new Array( this.vertices.length );
 			vertices = this.__tmpVertices;
-			
+
 			for ( v = 0, vl = this.vertices.length; v < vl; v ++ ) {
 
 				vertices[ v ] = new THREE.Vector3();
 
 			}
-			
+
 			for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
 				face = this.faces[ f ];
@@ -144,19 +159,18 @@ THREE.Geometry.prototype = {
 				}
 
 			}
-			
+
 		} else {
-			
+
 			vertices = this.__tmpVertices;
-			
+
 			for ( v = 0, vl = this.vertices.length; v < vl; v ++ ) {
 
 				vertices[ v ].set( 0, 0, 0 );
 
 			}
-			
+
 		}
-		
 
 		for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
@@ -208,12 +222,13 @@ THREE.Geometry.prototype = {
 
 	},
 
-	computeTangents: function() {
+	computeTangents: function () {
 
 		// based on http://www.terathon.com/code/tangent.html
 		// tangents go to vertices
 
-		var f, fl, v, vl, face, uv, vA, vB, vC, uvA, uvB, uvC,
+		var f, fl, v, vl, i, il, vertexIndex,
+			face, uv, vA, vB, vC, uvA, uvB, uvC,
 			x1, x2, y1, y2, z1, z2,
 			s1, s2, t1, t2, r, t, test,
 			tan1 = [], tan2 = [],
@@ -271,48 +286,49 @@ THREE.Geometry.prototype = {
 		for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
 			face = this.faces[ f ];
-			uv = this.uvs[ f ];
+			uv = this.faceVertexUvs[ 0 ][ f ]; // use UV layer 0 for tangents
 
 			if ( face instanceof THREE.Face3 ) {
 
 				handleTriangle( this, face.a, face.b, face.c, 0, 1, 2 );
-
-				this.vertices[ face.a ].normal.copy( face.vertexNormals[ 0 ] );
-				this.vertices[ face.b ].normal.copy( face.vertexNormals[ 1 ] );
-				this.vertices[ face.c ].normal.copy( face.vertexNormals[ 2 ] );
-
 
 			} else if ( face instanceof THREE.Face4 ) {
 
 				handleTriangle( this, face.a, face.b, face.c, 0, 1, 2 );
 				handleTriangle( this, face.a, face.b, face.d, 0, 1, 3 );
 
-				this.vertices[ face.a ].normal.copy( face.vertexNormals[ 0 ] );
-				this.vertices[ face.b ].normal.copy( face.vertexNormals[ 1 ] );
-				this.vertices[ face.c ].normal.copy( face.vertexNormals[ 2 ] );
-				this.vertices[ face.d ].normal.copy( face.vertexNormals[ 3 ] );
-
 			}
 
 		}
 
-		for ( v = 0, vl = this.vertices.length; v < vl; v ++ ) {
+		var faceIndex = [ 'a', 'b', 'c', 'd' ];
 
-			n.copy( this.vertices[ v ].normal );
-			t = tan1[ v ];
+		for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
-			// Gram-Schmidt orthogonalize
+			face = this.faces[ f ];
 
-			tmp.copy( t );
-			tmp.subSelf( n.multiplyScalar( n.dot( t ) ) ).normalize();
+			for ( i = 0; i < face.vertexNormals.length; i++ ) {
 
-			// Calculate handedness
+				n.copy( face.vertexNormals[ i ] );
 
-			tmp2.cross( this.vertices[ v ].normal, t );
-			test = tmp2.dot( tan2[ v ] );
-			w = (test < 0.0) ? -1.0 : 1.0;
+				vertexIndex = face[ faceIndex[ i ] ];
 
-			this.vertices[ v ].tangent.set( tmp.x, tmp.y, tmp.z, w );
+				t = tan1[ vertexIndex ];
+
+				// Gram-Schmidt orthogonalize
+
+				tmp.copy( t );
+				tmp.subSelf( n.multiplyScalar( n.dot( t ) ) ).normalize();
+
+				// Calculate handedness
+
+				tmp2.cross( face.vertexNormals[ i ], t );
+				test = tmp2.dot( tan2[ vertexIndex ] );
+				w = (test < 0.0) ? -1.0 : 1.0;
+
+				face.vertexTangents[ i ] = new THREE.Vector4( tmp.x, tmp.y, tmp.z, w );
+
+			}
 
 		}
 
@@ -384,84 +400,108 @@ THREE.Geometry.prototype = {
 
 	},
 
-	sortFacesByMaterial: function () {
+	computeEdgeFaces: function () {
 
-		// TODO
-		// Should optimize by grouping faces with ColorFill / ColorStroke materials
-		// which could then use vertex color attributes instead of each being
-		// in its separate VBO
+		function edge_hash( a, b ) {
 
-		var i, l, f, fl, face, material, materials, vertices, mhash, ghash, hash_map = {};
+			return Math.min( a, b ) + "_" + Math.max( a, b );
 
-		function materialHash( material ) {
+		};
 
-			var hash_array = [];
+		function addToMap( map, hash, i ) {
 
-			for ( i = 0, l = material.length; i < l; i++ ) {
+			if ( map[ hash ] === undefined ) {
 
-				if ( material[ i ] == undefined ) {
+				map[ hash ] = { "set": {}, "array": [] };
+				map[ hash ].set[ i ] = 1;
+				map[ hash ].array.push( i );
 
-					hash_array.push( "undefined" );
+			} else {
 
-				} else {
+				if( map[ hash ].set[ i ] === undefined ) {
 
-					hash_array.push( material[ i ].toString() );
-
-				}
-
-			}
-
-			return hash_array.join( '_' );
-
-		}
-
-		for ( f = 0, fl = this.faces.length; f < fl; f++ ) {
-
-			face = this.faces[ f ];
-			materials = face.materials;
-
-			mhash = materialHash( materials );
-
-			if ( hash_map[ mhash ] == undefined ) {
-
-				hash_map[ mhash ] = { 'hash': mhash, 'counter': 0 };
-
-			}
-
-			ghash = hash_map[ mhash ].hash + '_' + hash_map[ mhash ].counter;
-
-			if ( this.geometryChunks[ ghash ] == undefined ) {
-
-				this.geometryChunks[ ghash ] = { 'faces': [], 'materials': materials, 'vertices': 0 };
-
-			}
-
-			vertices = face instanceof THREE.Face3 ? 3 : 4;
-
-			if ( this.geometryChunks[ ghash ].vertices + vertices > 65535 ) {
-
-				hash_map[ mhash ].counter += 1;
-				ghash = hash_map[ mhash ].hash + '_' + hash_map[ mhash ].counter;
-
-				if ( this.geometryChunks[ ghash ] == undefined ) {
-
-					this.geometryChunks[ ghash ] = { 'faces': [], 'materials': materials, 'vertices': 0 };
+					map[ hash ].set[ i ] = 1;
+					map[ hash ].array.push( i );
 
 				}
 
 			}
 
-			this.geometryChunks[ ghash ].faces.push( f );
-			this.geometryChunks[ ghash ].vertices += vertices;
+		};
+
+		var i, il, v1, v2, j, k,
+			face, faceIndices, faceIndex,
+			edge,
+			hash,
+			vfMap = {};
+
+		// construct vertex -> face map
+
+		for( i = 0, il = this.faces.length; i < il; i ++ ) {
+
+			face = this.faces[ i ];
+
+			if ( face instanceof THREE.Face3 ) {
+
+				hash = edge_hash( face.a, face.b );
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.b, face.c );
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.a, face.c );
+				addToMap( vfMap, hash, i );
+
+			} else if ( face instanceof THREE.Face4 ) {
+
+				// in WebGLRenderer quad is tesselated
+				// to triangles: a,b,d / b,c,d
+				// shared edge is: b,d
+
+				// should shared edge be included?
+				// comment out if not
+
+				hash = edge_hash( face.b, face.d ); 
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.a, face.b );
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.a, face.d );
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.b, face.c );
+				addToMap( vfMap, hash, i );
+
+				hash = edge_hash( face.c, face.d );
+				addToMap( vfMap, hash, i );
+
+			}
 
 		}
 
-	},
+		// extract faces
 
-	toString: function () {
+		for( i = 0, il = this.edges.length; i < il; i ++ ) {
 
-		return 'THREE.Geometry ( vertices: ' + this.vertices + ', faces: ' + this.faces + ', uvs: ' + this.uvs + ' )';
+			edge = this.edges[ i ];
+
+			v1 = edge.vertexIndices[ 0 ];
+			v2 = edge.vertexIndices[ 1 ];
+
+			edge.faceIndices = vfMap[ edge_hash( v1, v2 ) ].array;
+
+			for( j = 0; j < edge.faceIndices.length; j ++ ) {
+
+				faceIndex = edge.faceIndices[ j ];
+				edge.faces.push( this.faces[ faceIndex ] );
+
+			}
+
+		}
 
 	}
 
 };
+
+THREE.GeometryIdCounter = 0;

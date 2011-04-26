@@ -2,68 +2,48 @@
  * @author alteredq / http://alteredqualia.com/
  *
  * parameters = {
- *  fragment_shader: <string>,
- *  vertex_shader: <string>,
+ *  fragmentShader: <string>,
+ *  vertexShader: <string>,
+ 
  *  uniforms: { "parameter1": { type: "f", value: 1.0 }, "parameter2": { type: "i" value2: 2 } },
+ 
  *  shading: THREE.SmoothShading,
  *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ 
  *  wireframe: <boolean>,
- *  wireframe_linewidth: <float>
+ *  wireframeLinewidth: <float>,
+ 
+ *  lights: <bool>,
+ *  vertexColors: <bool>,
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
  * }
  */
 
 THREE.MeshShaderMaterial = function ( parameters ) {
 
-	this.id = THREE.MeshShaderMaterialCounter.value ++;
+	THREE.Material.call( this, parameters );
 
-	this.fragment_shader = "void main() {}";
-	this.vertex_shader = "void main() {}";
-	this.uniforms = {};
+	parameters = parameters || {};
 
-	this.opacity = 1;
-	this.shading = THREE.SmoothShading;
-	this.blending = THREE.NormalBlending;
+	this.fragmentShader = parameters.fragmentShader !== undefined ? parameters.fragmentShader : "void main() {}";
+	this.vertexShader = parameters.vertexShader !== undefined ? parameters.vertexShader : "void main() {}";
+	this.uniforms = parameters.uniforms !== undefined ? parameters.uniforms : {};
+	this.attributes = parameters.attributes;
 
-	this.wireframe = false;
-	this.wireframe_linewidth = 1;
-	this.wireframe_linecap = 'round';
-	this.wireframe_linejoin = 'round';
+	this.shading = parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading;
 
-	if ( parameters ) {
+	this.wireframe = parameters.wireframe !== undefined ? parameters.wireframe : false;
+	this.wireframeLinewidth = parameters.wireframeLinewidth !== undefined ? parameters.wireframeLinewidth : 1;
 
-		if ( parameters.fragment_shader !== undefined ) this.fragment_shader = parameters.fragment_shader;
-		if ( parameters.vertex_shader !== undefined ) this.vertex_shader = parameters.vertex_shader;
-
-		if ( parameters.uniforms !== undefined ) this.uniforms = parameters.uniforms;
-
-		if ( parameters.shading !== undefined ) this.shading = parameters.shading;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
-
-		if ( parameters.wireframe !== undefined ) this.wireframe = parameters.wireframe;
-		if ( parameters.wireframe_linewidth !== undefined ) this.wireframe_linewidth = parameters.wireframe_linewidth;
-		if ( parameters.wireframe_linecap !== undefined ) this.wireframe_linecap = parameters.wireframe_linecap;
-		if ( parameters.wireframe_linejoin !== undefined ) this.wireframe_linejoin = parameters.wireframe_linejoin;
-
-	}
+	this.fog = parameters.fog !== undefined ? parameters.fog : false; // set to use scene fog
+	this.lights = parameters.lights !== undefined ? parameters.lights : false; // set to use scene lights
+	this.vertexColors = parameters.vertexColors !== undefined ? parameters.vertexColors : false; // set to use "color" attribute stream
+	this.skinning = parameters.skinning !== undefined ? parameters.skinning : false; // set to use skinning attribute streams
+	this.morphTargets = parameters.morphTargets !== undefined ? parameters.morphTargets : false; // set to use morph targets
 
 };
 
-THREE.MeshShaderMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.MeshShaderMaterial (<br/>' +
-			'id: ' + this.id + '<br/>' +
-
-			'blending: ' + this.blending + '<br/>' +
-			'wireframe: ' + this.wireframe + '<br/>' +
-			'wireframe_linewidth: ' + this.wireframe_linewidth +'<br/>' +
-			'wireframe_linecap: ' + this.wireframe_linecap +'<br/>' +
-			'wireframe_linejoin: ' + this.wireframe_linejoin +'<br/>' +
-			')';
-
-	}
-
-};
-
-THREE.MeshShaderMaterialCounter = { value: 0 };
+THREE.MeshShaderMaterial.prototype = new THREE.Material();
+THREE.MeshShaderMaterial.prototype.constructor = THREE.MeshShaderMaterial;

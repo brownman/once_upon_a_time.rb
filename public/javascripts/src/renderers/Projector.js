@@ -7,7 +7,8 @@
 THREE.Projector = function() {
 
 	var _object, _objectCount, _objectPool = [],
-	_face3, _face32, _face3Count, _face3Pool = [],
+	_vertex, _vertexCount, _vertexPool = [],
+	_face, _face3Count, _face3Pool = [], _face4Count, _face4Pool = [],
 	_line, _lineCount, _linePool = [],
 	_particle, _particleCount, _particlePool = [],
 
@@ -15,22 +16,46 @@ THREE.Projector = function() {
 	_vector4 = new THREE.Vector4(),
 	_projScreenMatrix = new THREE.Matrix4(),
 	_projScreenObjectMatrix = new THREE.Matrix4(),
-	_frustum = [],
+
+	_frustum = [
+		new THREE.Vector4(),
+		new THREE.Vector4(),
+		new THREE.Vector4(),
+		new THREE.Vector4(),
+		new THREE.Vector4(),
+		new THREE.Vector4()
+	 ],
 
 	_clippedVertex1PositionScreen = new THREE.Vector4(),
 	_clippedVertex2PositionScreen = new THREE.Vector4(),
 
 	_face3VertexNormals;
 
+
+	this.projectVector = function ( vector, camera ) {
+
+		_projScreenMatrix.multiply( camera.projectionMatrix, camera.matrixWorldInverse );
+		_projScreenMatrix.multiplyVector3( vector );
+
+		return vector;
+
+	};
+
+	this.unprojectVector = function ( vector, camera ) {
+
+		_projScreenMatrix.multiply( camera.matrixWorld, THREE.Matrix4.makeInvert( camera.projectionMatrix ) );
+		_projScreenMatrix.multiplyVector3( vector );
+
+		return vector;
+
+	};
+
 	this.projectObjects = function ( scene, camera, sort ) {
 
 		var renderList = [],
-		o, ol, objects, object;
+		o, ol, objects, object, matrix;
 
 		_objectCount = 0;
-		_projScreenMatrix.multiply( camera.projectionMatrix, camera.matrix );
-
-		computeFrustum( _projScreenMatrix );
 
 		objects = scene.objects;
 
@@ -40,7 +65,7 @@ THREE.Projector = function() {
 
 			if ( !object.visible || ( object instanceof THREE.Mesh && !isInFrustum( object ) ) ) continue;
 
-			_object = _objectPool[ _objectCount ] = _objectPool[ _objectCount ] || new THREE.RenderableObject();
+			_object = getNextObjectInPool();
 
 			_vector3.copy( object.position );
 			_projScreenMatrix.multiplyVector3( _vector3 );
@@ -50,8 +75,6 @@ THREE.Projector = function() {
 
 			renderList.push( _object );
 
-			_objectCount ++;
-
 		}
 
 		sort && renderList.sort( painterSort );
@@ -60,23 +83,30 @@ THREE.Projector = function() {
 
 	};
 
-	// TODO: Rename to projectElements? Test also using it with projectObjects to speed up sorting?
+	// TODO: Rename to projectElements?
 
 	this.projectScene = function ( scene, camera, sort ) {
 
 		var renderList = [], near = camera.near, far = camera.far,
-		o, ol, v, vl, f, fl, n, nl, objects, object,
-		objectMatrix, objectRotationMatrix, objectMaterials, objectOverdraw,
+		o, ol, v, vl, f, fl, n, nl, c, cl, u, ul, objects, object,
+		objectMatrix, objectMatrixRotation, objectMaterials, objectOverdraw,
 		geometry, vertices, vertex, vertexPositionScreen,
-		faces, face, faceVertexNormals, normal, v1, v2, v3, v4;
+		faces, face, faceVertexNormals, normal, faceVertexUvs, uvs,
+		v1, v2, v3, v4;
 
-		_face3Count = _lineCount = _particleCount = 0;
+		_face3Count = 0;
+		_face4Count = 0;
+		_lineCount = 0;
+		_particleCount = 0;
+	
+		camera.matrixAutoUpdate && camera.update( undefined, true );
 
-		camera.autoUpdateMatrix && camera.updateMatrix();
+		scene.update( undefined, false, camera );
 
-		_projScreenMatrix.multiply( camera.projectionMatrix, camera.matrix );
+		_projScreenMatrix.multiply( camera.projectionMatrix, camera.matrixWorldInverse );
+		computeFrustum( _projScreenMatrix );
 
-		objects = this.projectObjects( scene, camera, true ); // scene.objects;
+		objects = this.projectObjects( scene, camera, true );
 
 		for ( o = 0, ol = objects.length; o < ol; o++ ) {
 
@@ -84,42 +114,37 @@ THREE.Projector = function() {
 
 			if ( !object.visible ) continue;
 
-			object.autoUpdateMatrix && object.updateMatrix();
+			objectMatrix = object.matrixWorld;
+			objectMatrixRotation = object.matrixRotationWorld;
 
-			objectMatrix = object.matrix;
-			objectRotationMatrix = object.rotationMatrix;
 			objectMaterials = object.materials;
 			objectOverdraw = object.overdraw;
+
+			_vertexCount = 0;
 
 			if ( object instanceof THREE.Mesh ) {
 
 				geometry = object.geometry;
-
-				// vertices
-
 				vertices = geometry.vertices;
+				faces = geometry.faces;
+				faceVertexUvs = geometry.faceVertexUvs;
 
 				for ( v = 0, vl = vertices.length; v < vl; v ++ ) {
 
-					vertex = vertices[ v ];
+					_vertex = getNextVertexInPool();
+					_vertex.positionWorld.copy( vertices[ v ].position );
 
-					vertex.positionWorld.copy( vertex.position );
-					objectMatrix.multiplyVector3( vertex.positionWorld );
+					objectMatrix.multiplyVector3( _vertex.positionWorld );
 
-					vertexPositionScreen = vertex.positionScreen;
-					vertexPositionScreen.copy( vertex.positionWorld );
-					_projScreenMatrix.multiplyVector4( vertexPositionScreen );
+					_vertex.positionScreen.copy( _vertex.positionWorld );
+					_projScreenMatrix.multiplyVector4( _vertex.positionScreen );
 
-					vertexPositionScreen.x /= vertexPositionScreen.w;
-					vertexPositionScreen.y /= vertexPositionScreen.w;
+					_vertex.positionScreen.x /= _vertex.positionScreen.w;
+					_vertex.positionScreen.y /= _vertex.positionScreen.w;
 
-					vertex.__visible = vertexPositionScreen.z > near && vertexPositionScreen.z < far;
+					_vertex.visible = _vertex.positionScreen.z > near && _vertex.positionScreen.z < far;
 
 				}
-
-				// faces
-
-				faces = geometry.faces;
 
 				for ( f = 0, fl = faces.length; f < fl; f ++ ) {
 
@@ -127,158 +152,96 @@ THREE.Projector = function() {
 
 					if ( face instanceof THREE.Face3 ) {
 
-						v1 = vertices[ face.a ]; v2 = vertices[ face.b ]; v3 = vertices[ face.c ];
+						v1 = _vertexPool[ face.a ];
+						v2 = _vertexPool[ face.b ];
+						v3 = _vertexPool[ face.c ];
 
-						if ( v1.__visible && v2.__visible && v3.__visible ) {
+						if ( v1.visible && v2.visible && v3.visible &&
+							( object.doubleSided || ( object.flipSided !=
+							( v3.positionScreen.x - v1.positionScreen.x ) * ( v2.positionScreen.y - v1.positionScreen.y ) -
+							( v3.positionScreen.y - v1.positionScreen.y ) * ( v2.positionScreen.x - v1.positionScreen.x ) < 0 ) ) ) {
 
-							if ( ( object.doubleSided || ( object.flipSided !=
-							   ( v3.positionScreen.x - v1.positionScreen.x ) * ( v2.positionScreen.y - v1.positionScreen.y ) -
-							   ( v3.positionScreen.y - v1.positionScreen.y ) * ( v2.positionScreen.x - v1.positionScreen.x ) < 0 ) ) ) {
+							_face = getNextFace3InPool();
 
-								_face3 = _face3Pool[ _face3Count ] = _face3Pool[ _face3Count ] || new THREE.RenderableFace3();
+							_face.v1.copy( v1 );
+							_face.v2.copy( v2 );
+							_face.v3.copy( v3 );
 
-								_face3.v1.positionWorld.copy( v1.positionWorld );
-								_face3.v2.positionWorld.copy( v2.positionWorld );
-								_face3.v3.positionWorld.copy( v3.positionWorld );
+						} else {
 
-								_face3.v1.positionScreen.copy( v1.positionScreen );
-								_face3.v2.positionScreen.copy( v2.positionScreen );
-								_face3.v3.positionScreen.copy( v3.positionScreen );
-
-								_face3.normalWorld.copy( face.normal );
-								objectRotationMatrix.multiplyVector3( _face3.normalWorld );
-
-								_face3.centroidWorld.copy( face.centroid );
-								objectMatrix.multiplyVector3( _face3.centroidWorld );
-
-								_face3.centroidScreen.copy( _face3.centroidWorld );
-								_projScreenMatrix.multiplyVector3( _face3.centroidScreen );
-
-								faceVertexNormals = face.vertexNormals;
-								_face3VertexNormals = _face3.vertexNormalsWorld;
-
-								for ( n = 0, nl = faceVertexNormals.length; n < nl; n ++ ) {
-
-									normal = _face3VertexNormals[ n ] = _face3VertexNormals[ n ] || new THREE.Vector3();
-									normal.copy( faceVertexNormals[ n ] );
-									objectRotationMatrix.multiplyVector3( normal );
-
-								}
-
-								_face3.z = _face3.centroidScreen.z;
-
-								_face3.meshMaterials = objectMaterials;
-								_face3.faceMaterials = face.materials;
-								_face3.overdraw = objectOverdraw;
-
-								if ( object.geometry.uvs[ f ] ) {
-
-									_face3.uvs[ 0 ] = object.geometry.uvs[ f ][ 0 ];
-									_face3.uvs[ 1 ] = object.geometry.uvs[ f ][ 1 ];
-									_face3.uvs[ 2 ] = object.geometry.uvs[ f ][ 2 ];
-
-								}
-
-								renderList.push( _face3 );
-
-								_face3Count ++;
-
-							}
+							continue;
 
 						}
 
 					} else if ( face instanceof THREE.Face4 ) {
 
-						v1 = vertices[ face.a ]; v2 = vertices[ face.b ]; v3 = vertices[ face.c ]; v4 = vertices[ face.d ];
+						v1 = _vertexPool[ face.a ];
+						v2 = _vertexPool[ face.b ];
+						v3 = _vertexPool[ face.c ];
+						v4 = _vertexPool[ face.d ];
 
-						if ( v1.__visible && v2.__visible && v3.__visible && v4.__visible ) {
+						if ( v1.visible && v2.visible && v3.visible && v4.visible &&
+							( object.doubleSided || ( object.flipSided !=
+							( ( v4.positionScreen.x - v1.positionScreen.x ) * ( v2.positionScreen.y - v1.positionScreen.y ) -
+							( v4.positionScreen.y - v1.positionScreen.y ) * ( v2.positionScreen.x - v1.positionScreen.x ) < 0 ||
+							( v2.positionScreen.x - v3.positionScreen.x ) * ( v4.positionScreen.y - v3.positionScreen.y ) -
+							( v2.positionScreen.y - v3.positionScreen.y ) * ( v4.positionScreen.x - v3.positionScreen.x ) < 0 ) ) ) ) {
 
-							if ( ( object.doubleSided || ( object.flipSided !=
-							   ( ( v4.positionScreen.x - v1.positionScreen.x ) * ( v2.positionScreen.y - v1.positionScreen.y ) -
-							   ( v4.positionScreen.y - v1.positionScreen.y ) * ( v2.positionScreen.x - v1.positionScreen.x ) < 0 ||
-							   ( v2.positionScreen.x - v3.positionScreen.x ) * ( v4.positionScreen.y - v3.positionScreen.y ) -
-							   ( v2.positionScreen.y - v3.positionScreen.y ) * ( v4.positionScreen.x - v3.positionScreen.x ) < 0 ) ) ) ) {
+							_face = getNextFace4InPool();
 
-								_face3 = _face3Pool[ _face3Count ] = _face3Pool[ _face3Count ] || new THREE.RenderableFace3();
+							_face.v1.copy( v1 );
+							_face.v2.copy( v2 );
+							_face.v3.copy( v3 );
+							_face.v4.copy( v4 );
 
-								_face3.v1.positionWorld.copy( v1.positionWorld );
-								_face3.v2.positionWorld.copy( v2.positionWorld );
-								_face3.v3.positionWorld.copy( v4.positionWorld );
+						} else {
 
-								_face3.v1.positionScreen.copy( v1.positionScreen );
-								_face3.v2.positionScreen.copy( v2.positionScreen );
-								_face3.v3.positionScreen.copy( v4.positionScreen );
-
-								_face3.normalWorld.copy( face.normal );
-								objectRotationMatrix.multiplyVector3( _face3.normalWorld );
-
-								_face3.centroidWorld.copy( face.centroid );
-								objectMatrix.multiplyVector3( _face3.centroidWorld );
-
-								_face3.centroidScreen.copy( _face3.centroidWorld );
-								_projScreenMatrix.multiplyVector3( _face3.centroidScreen );
-
-								// TODO: Handle vertex normals
-
-								_face3.z = _face3.centroidScreen.z;
-
-								_face3.meshMaterials = objectMaterials;
-								_face3.faceMaterials = face.materials;
-								_face3.overdraw = objectOverdraw;
-
-								if ( object.geometry.uvs[ f ] ) {
-
-									_face3.uvs[ 0 ] = object.geometry.uvs[ f ][ 0 ];
-									_face3.uvs[ 1 ] = object.geometry.uvs[ f ][ 1 ];
-									_face3.uvs[ 2 ] = object.geometry.uvs[ f ][ 3 ];
-
-								}
-
-								renderList.push( _face3 );
-
-								_face3Count ++;
-
-								// 
-
-								_face32 = _face3Pool[ _face3Count ] = _face3Pool[ _face3Count ] || new THREE.RenderableFace3();
-
-								_face32.v1.positionWorld.copy( v2.positionWorld );
-								_face32.v2.positionWorld.copy( v3.positionWorld );
-								_face32.v3.positionWorld.copy( v4.positionWorld );
-
-								_face32.v1.positionScreen.copy( v2.positionScreen );
-								_face32.v2.positionScreen.copy( v3.positionScreen );
-								_face32.v3.positionScreen.copy( v4.positionScreen );
-
-								_face32.normalWorld.copy( _face3.normalWorld );
-								_face32.centroidWorld.copy( _face3.centroidWorld );
-								_face32.centroidScreen.copy( _face3.centroidScreen );
-
-								// TODO: Handle vertex normals
-
-								_face32.z = _face32.centroidScreen.z;
-
-								_face32.meshMaterials = objectMaterials;
-								_face32.faceMaterials = face.materials;
-								_face32.overdraw = objectOverdraw;
-
-								if ( object.geometry.uvs[ f ] ) {
-
-									_face32.uvs[ 0 ] = object.geometry.uvs[ f ][ 1 ];
-									_face32.uvs[ 1 ] = object.geometry.uvs[ f ][ 2 ];
-									_face32.uvs[ 2 ] = object.geometry.uvs[ f ][ 3 ];
-
-								}
-
-								renderList.push( _face32 );
-
-								_face3Count ++;
-
-							}
+							continue;
 
 						}
 
 					}
+
+					_face.normalWorld.copy( face.normal );
+					objectMatrixRotation.multiplyVector3( _face.normalWorld );
+
+					_face.centroidWorld.copy( face.centroid );
+					objectMatrix.multiplyVector3( _face.centroidWorld );
+
+					_face.centroidScreen.copy( _face.centroidWorld );
+					_projScreenMatrix.multiplyVector3( _face.centroidScreen );
+
+					faceVertexNormals = face.vertexNormals;
+
+					for ( n = 0, nl = faceVertexNormals.length; n < nl; n ++ ) {
+
+						normal = _face.vertexNormalsWorld[ n ];
+						normal.copy( faceVertexNormals[ n ] );
+						objectMatrixRotation.multiplyVector3( normal );
+
+					}
+
+					for ( c = 0, cl = faceVertexUvs.length; c < cl; c ++ ) {
+
+						uvs = faceVertexUvs[ c ][ f ];
+
+						if ( !uvs ) continue;
+
+						for ( u = 0, ul = uvs.length; u < ul; u ++ ) {
+
+							_face.uvs[ c ][ u ] = uvs[ u ];
+
+						}
+
+					}
+
+					_face.meshMaterials = objectMaterials;
+					_face.faceMaterials = face.materials;
+					_face.overdraw = objectOverdraw;
+
+					_face.z = _face.centroidScreen.z;
+
+					renderList.push( _face );
 
 				}
 
@@ -288,18 +251,17 @@ THREE.Projector = function() {
 
 				vertices = object.geometry.vertices;
 
-				vertex = vertices[ 0 ];
-				vertex.positionScreen.copy( vertex.position );
-				_projScreenObjectMatrix.multiplyVector4( vertex.positionScreen );
+				v1 = getNextVertexInPool();
+				v1.positionScreen.copy( vertices[ 0 ].position );
+				_projScreenObjectMatrix.multiplyVector4( v1.positionScreen );
 
 				for ( v = 1, vl = vertices.length; v < vl; v++ ) {
 
-					v1 = vertices[ v ];
-
-					v1.positionScreen.copy( v1.position );
+					v1 = getNextVertexInPool();
+					v1.positionScreen.copy( vertices[ v ].position );
 					_projScreenObjectMatrix.multiplyVector4( v1.positionScreen );
 
-					v2 = vertices[ v - 1 ];
+					v2 = _vertexPool[ _vertexCount - 2 ];
 
 					_clippedVertex1PositionScreen.copy( v1.positionScreen );
 					_clippedVertex2PositionScreen.copy( v2.positionScreen );
@@ -310,7 +272,7 @@ THREE.Projector = function() {
 						_clippedVertex1PositionScreen.multiplyScalar( 1 / _clippedVertex1PositionScreen.w );
 						_clippedVertex2PositionScreen.multiplyScalar( 1 / _clippedVertex2PositionScreen.w );
 
-						_line = _linePool[ _lineCount ] = _linePool[ _lineCount ] || new THREE.RenderableLine();
+						_line = getNextLineInPool();
 						_line.v1.positionScreen.copy( _clippedVertex1PositionScreen );
 						_line.v2.positionScreen.copy( _clippedVertex2PositionScreen );
 
@@ -320,21 +282,19 @@ THREE.Projector = function() {
 
 						renderList.push( _line );
 
-						_lineCount ++;
 					}
 				}
 
 			} else if ( object instanceof THREE.Particle ) {
 
-				_vector4.set( object.position.x, object.position.y, object.position.z, 1 );
-
+				_vector4.set( object.matrixWorld.n14, object.matrixWorld.n24, object.matrixWorld.n34, 1 );
 				_projScreenMatrix.multiplyVector4( _vector4 );
 
 				_vector4.z /= _vector4.w;
 
 				if ( _vector4.z > 0 && _vector4.z < 1 ) {
 
-					_particle = _particlePool[ _particleCount ] = _particlePool[ _particleCount ] || new THREE.RenderableParticle();
+					_particle = getNextParticleInPool();
 					_particle.x = _vector4.x / _vector4.w;
 					_particle.y = _vector4.y / _vector4.w;
 					_particle.z = _vector4.z;
@@ -348,8 +308,6 @@ THREE.Projector = function() {
 
 					renderList.push( _particle );
 
-					_particleCount ++;
-
 				}
 
 			}
@@ -362,17 +320,67 @@ THREE.Projector = function() {
 
 	};
 
-	this.unprojectVector = function ( vector, camera ) {
+	// Pools
 
-		var matrix = THREE.Matrix4.makeInvert( camera.matrix );
+	function getNextObjectInPool() {
 
-		matrix.multiplySelf( THREE.Matrix4.makeInvert( camera.projectionMatrix ) );
+		var object = _objectPool[ _objectCount ] = _objectPool[ _objectCount ] || new THREE.RenderableObject();
 
-		matrix.multiplyVector3( vector );
+		_objectCount ++;
 
-		return vector;
+		return object;
 
-	};
+	}
+
+	function getNextVertexInPool() {
+
+		var vertex = _vertexPool[ _vertexCount ] = _vertexPool[ _vertexCount ] || new THREE.RenderableVertex();
+
+		_vertexCount ++;
+
+		return vertex;
+
+	}
+
+	function getNextFace3InPool() {
+
+		var face = _face3Pool[ _face3Count ] = _face3Pool[ _face3Count ] || new THREE.RenderableFace3();
+
+		_face3Count ++;
+
+		return face;
+
+	}
+
+	function getNextFace4InPool() {
+
+		var face = _face4Pool[ _face4Count ] = _face4Pool[ _face4Count ] || new THREE.RenderableFace4();
+
+		_face4Count ++;
+
+		return face;
+
+	}
+
+	function getNextLineInPool() {
+
+		var line = _linePool[ _lineCount ] = _linePool[ _lineCount ] || new THREE.RenderableLine();
+
+		_lineCount ++;
+
+		return line;
+
+	}
+
+	function getNextParticleInPool() {
+
+		var particle = _particlePool[ _particleCount ] = _particlePool[ _particleCount ] || new THREE.RenderableParticle();
+		_particleCount ++;
+		return particle;
+
+	}
+
+	//
 
 	function painterSort( a, b ) {
 
@@ -382,14 +390,14 @@ THREE.Projector = function() {
 
 	function computeFrustum( m ) {
 
-		_frustum[ 0 ] = new THREE.Vector4( m.n41 - m.n11, m.n42 - m.n12, m.n43 - m.n13, m.n44 - m.n14 );
-		_frustum[ 1 ] = new THREE.Vector4( m.n41 + m.n11, m.n42 + m.n12, m.n43 + m.n13, m.n44 + m.n14 );
-		_frustum[ 2 ] = new THREE.Vector4( m.n41 + m.n21, m.n42 + m.n22, m.n43 + m.n23, m.n44 + m.n24 );
-		_frustum[ 3 ] = new THREE.Vector4( m.n41 - m.n21, m.n42 - m.n22, m.n43 - m.n23, m.n44 - m.n24 );
-		_frustum[ 4 ] = new THREE.Vector4( m.n41 - m.n31, m.n42 - m.n32, m.n43 - m.n33, m.n44 - m.n34 );
-		_frustum[ 5 ] = new THREE.Vector4( m.n41 + m.n31, m.n42 + m.n32, m.n43 + m.n33, m.n44 + m.n34 );
+		_frustum[ 0 ].set( m.n41 - m.n11, m.n42 - m.n12, m.n43 - m.n13, m.n44 - m.n14 );
+		_frustum[ 1 ].set( m.n41 + m.n11, m.n42 + m.n12, m.n43 + m.n13, m.n44 + m.n14 );
+		_frustum[ 2 ].set( m.n41 + m.n21, m.n42 + m.n22, m.n43 + m.n23, m.n44 + m.n24 );
+		_frustum[ 3 ].set( m.n41 - m.n21, m.n42 - m.n22, m.n43 - m.n23, m.n44 - m.n24 );
+		_frustum[ 4 ].set( m.n41 - m.n31, m.n42 - m.n32, m.n43 - m.n33, m.n44 - m.n34 );
+		_frustum[ 5 ].set( m.n41 + m.n31, m.n42 + m.n32, m.n43 + m.n33, m.n44 + m.n34 );
 
-		for ( var i = 0, l = _frustum.length; i < l; i ++ ) {
+		for ( var i = 0; i < 6; i ++ ) {
 
 			var plane = _frustum[ i ];
 			plane.divideScalar( Math.sqrt( plane.x * plane.x + plane.y * plane.y + plane.z * plane.z ) );
@@ -400,19 +408,19 @@ THREE.Projector = function() {
 
 	function isInFrustum( object ) {
 
-		var d, position = object.position,
+		var distance, matrix = object.matrixWorld,
 		radius = - object.geometry.boundingSphere.radius * Math.max( object.scale.x, Math.max( object.scale.y, object.scale.z ) );
 
 		for ( var i = 0; i < 6; i ++ ) {
 
-			d = _frustum[ i ].x * position.x + _frustum[ i ].y * position.y + _frustum[ i ].z * position.z + _frustum[ i ].w;
-			if ( d <= radius ) return false;
+			distance = _frustum[ i ].x * matrix.n14 + _frustum[ i ].y * matrix.n24 + _frustum[ i ].z * matrix.n34 + _frustum[ i ].w;
+			if ( distance <= radius ) return false;
 
 		}
 
 		return true;
 
-	}
+	};
 
 	function clipLine( s1, s2 ) {
 

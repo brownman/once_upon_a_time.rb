@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110425072052) do
+ActiveRecord::Schema.define(:version => 20110425113119) do
 
   create_table "messages", :force => true do |t|
     t.text     "content"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20110425072052) do
     t.string   "ancestry"
     t.integer  "x"
     t.integer  "y"
+    t.integer  "ab_x"
   end
 
   add_index "messages", ["ancestry"], :name => "index_messages_on_ancestry"

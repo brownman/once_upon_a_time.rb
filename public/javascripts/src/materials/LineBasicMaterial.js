@@ -1,48 +1,37 @@
 /**
  * @author mr.doob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
  *
  * parameters = {
  *  color: <hex>,
  *  opacity: <float>,
+ 
  *  blending: THREE.NormalBlending,
- *  linewidth: <float>
+ *  depthTest: <bool>,
+ 
+ *  linewidth: <float>,
+ *  linecap: "round",  
+ *  linejoin: "round",
+ 
+ *  vertexColors: <bool>
  * }
  */
 
 THREE.LineBasicMaterial = function ( parameters ) {
 
-	this.color = new THREE.Color( 0xffffff );
-	this.opacity = 1;
-	this.blending = THREE.NormalBlending;
-	this.linewidth = 1;
-	this.linecap = 'round';
-	this.linejoin = 'round';
+	THREE.Material.call( this, parameters );
 
-	if ( parameters ) {
+	parameters = parameters || {};
 
-		if ( parameters.color !== undefined ) this.color.setHex( parameters.color );
-		if ( parameters.opacity !== undefined ) this.opacity  = parameters.opacity;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
-		if ( parameters.linewidth !== undefined ) this.linewidth = parameters.linewidth;
-		if ( parameters.linecap !== undefined ) this.linecap = parameters.linecap;
-		if ( parameters.linejoin !== undefined ) this.linejoin = parameters.linejoin;
-	}
+	this.color = parameters.color !== undefined ? new THREE.Color( parameters.color ) : new THREE.Color( 0xffffff );
+
+	this.linewidth = parameters.linewidth !== undefined ? parameters.linewidth : 1;
+	this.linecap = parameters.linecap !== undefined ? parameters.linecap : 'round';
+	this.linejoin = parameters.linejoin !== undefined ? parameters.linejoin : 'round';
+
+	this.vertexColors = parameters.vertexColors ? parameters.vertexColors : false;
 
 };
 
-THREE.LineBasicMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.LineBasicMaterial (<br/>' +
-			'color: ' + this.color + '<br/>' +
-			'opacity: ' + this.opacity + '<br/>' +
-			'blending: ' + this.blending + '<br/>' +
-			'linewidth: ' + this.linewidth +'<br/>' +
-			'linecap: ' + this.linecap +'<br/>' +
-			'linejoin: ' + this.linejoin +'<br/>' +
-			')';
-
-	}
-
-}
+THREE.LineBasicMaterial.prototype = new THREE.Material();
+THREE.LineBasicMaterial.prototype.constructor = THREE.LineBasicMaterial;

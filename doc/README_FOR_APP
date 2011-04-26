@@ -13,4 +13,85 @@ best practive advices:
 
 2.      api.rails.content_for
 http://api.rubyonrails.org/classes/ActionView/Helpers/CaptureHelper.html#M001763
+         ///
 
+
+function set_materials()
+{
+  var material = new THREE.ParticleCanvasMaterial(
+      {
+
+color: 0xffffff,
+program: function ( context )
+{
+
+context.beginPath();
+context.arc( 0, 0, 1, 0, PI2, true );
+context.closePath();
+context.fill();
+
+}//program..
+
+}//var material 
+
+//var material1 = new THREE.LineBasicMaterial(
+//  { color: 0x008080, opacity: 1, blending: THREE.AdditiveBlending }
+//  );
+}//func
+
+// var textMaterial = new THREE.ParticleBasicMaterial(
+//  {
+
+//map: new THREE.Texture
+//( 
+//       createTextImage( greetings[ j ].content )
+//)
+
+//, blending: THREE.AdditiveBlending
+//}
+
+//); 
+
+//}//func
+
+                        
+<audio id="audio" autobuffer="">
+<source src="audios/1.ogg" type="audio/ogg; codecs=vorbis"> 
+</audio>    
+  
+  <!--
+  <!DOCTYPE HTML> 
+<html lang="en">  
+     -<head> 
+
+    <title>three.js canvas - lines - random</title> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/> 
+    <style type="text/css"> 
+      body {
+        background-color: #000000;
+        margin: 0px;
+        overflow: hidden;
+      }
+
+      a {
+        color:#0078ff;
+      }
+    </style> 
+  </head> 
+  <body> 
+
+     -->    
+ <!--
+   -  <%= render "jstuff" %>
+   -
+   -
+   -     <% title "Messages" %>
+   -
+   -
+   -    <%= render "example2" %>    
+
+   -->       
+    <!--
+        -<%= render "style1" %>
+        -->    

@@ -4,7 +4,8 @@
 
 THREE.SVGRenderer = function () {
 
-	var _renderList = null,
+	var _this = this,
+	_renderList = null,
 	_projector = new THREE.Projector(),
 	_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
 	_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
@@ -33,6 +34,13 @@ THREE.SVGRenderer = function () {
 	this.autoClear = true;
 	this.sortObjects = true;
 	this.sortElements = true;
+
+	this.data = {
+
+		vertices: 0,
+		faces: 0
+
+	}
 
 	this.setQuality = function( quality ) {
 
@@ -72,11 +80,10 @@ THREE.SVGRenderer = function () {
 
 		var e, el, m, ml, fm, fml, element, material;
 
-		if ( this.autoClear ) {
+		this.autoClear && this.clear();
 
-			this.clear();
-
-		}
+		_this.data.vertices = 0;
+		_this.data.faces = 0;
 
 		_renderList = _projector.projectScene( scene, camera, this.sortElements );
 
@@ -101,9 +108,11 @@ THREE.SVGRenderer = function () {
 				_v1 = element;
 				_v1.x *= _svgWidthHalf; _v1.y *= -_svgHeightHalf;
 
-				for ( m = 0, ml = element.materials.length; m < ml; m++ ) {
+				m = 0; ml = element.materials.length;
 
-					material = element.materials[ m ];
+				while ( m < ml ) {
+
+					material = element.materials[ m ++ ];
 					material && renderParticle( _v1, element, material, scene );
 
 				}
@@ -129,7 +138,7 @@ THREE.SVGRenderer = function () {
 				while ( m < ml ) {
 
 					material = element.materials[ m ++ ];
-					material && renderLine( _v1, _v2, element, material, scene );
+					material && material.opacity != 0 && renderLine( _v1, _v2, element, material, scene );
 
 				}
 
@@ -164,7 +173,7 @@ THREE.SVGRenderer = function () {
 						while ( fm < fml ) {
 
 							material = element.faceMaterials[ fm ++ ];
-							material && renderFace3( _v1, _v2, _v3, element, material, scene );
+							material && material.opacity != 0 && renderFace3( _v1, _v2, _v3, element, material, scene );
 
 						}
 
@@ -172,7 +181,7 @@ THREE.SVGRenderer = function () {
 
 					}
 
-					material && renderFace3( _v1, _v2, _v3, element, material, scene );
+					material && material.opacity != 0 && renderFace3( _v1, _v2, _v3, element, material, scene );
 
 				}
 
@@ -209,7 +218,7 @@ THREE.SVGRenderer = function () {
 						while ( fm < fml ) {
 
 							material = element.faceMaterials[ fm ++ ];
-							material && renderFace4( _v1, _v2, _v3, _v4, element, material, scene );
+							material && material.opacity != 0 && renderFace4( _v1, _v2, _v3, _v4, element, material, scene );
 
 						}
 
@@ -217,7 +226,7 @@ THREE.SVGRenderer = function () {
 
 					}
 
-					material && renderFace4( _v1, _v2, _v3, _v4, element, material, scene );
+					material && material.opacity != 0 && renderFace4( _v1, _v2, _v3, _v4, element, material, scene );
 
 				}
 
@@ -308,6 +317,7 @@ THREE.SVGRenderer = function () {
 
 	function renderParticle( v1, element, material, scene ) {
 
+		/*
 		_svgNode = getCircleNode( _circleCount++ );
 		_svgNode.setAttribute( 'cx', v1.x );
 		_svgNode.setAttribute( 'cy', v1.y );
@@ -338,6 +348,7 @@ THREE.SVGRenderer = function () {
 		}
 
 		_svg.appendChild( _svgNode );
+		*/
 
 	}
 
@@ -363,6 +374,9 @@ THREE.SVGRenderer = function () {
 	}
 
 	function renderFace3( v1, v2, v3, element, material, scene ) {
+
+		_this.data.vertices += 3;
+		_this.data.faces ++;
 
 		_svgNode = getPathNode( _pathCount ++ );
 		_svgNode.setAttribute( 'd', 'M ' + v1.positionScreen.x + ' ' + v1.positionScreen.y + ' L ' + v2.positionScreen.x + ' ' + v2.positionScreen.y + ' L ' + v3.positionScreen.x + ',' + v3.positionScreen.y + 'z' );
@@ -406,7 +420,7 @@ THREE.SVGRenderer = function () {
 
 		if ( material.wireframe ) {
 
-			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.__styleString + '; stroke-width: ' + material.wireframe_linewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframe_linecap + '; stroke-linejoin: ' + material.wireframe_linejoin );
+			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.__styleString + '; stroke-width: ' + material.wireframeLinewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframeLinecap + '; stroke-linejoin: ' + material.wireframeLinejoin );
 
 		} else {
 
@@ -419,6 +433,9 @@ THREE.SVGRenderer = function () {
 	}
 
 	function renderFace4( v1, v2, v3, v4, element, material, scene ) {
+
+		_this.data.vertices += 4;
+		_this.data.faces ++;
 
 		_svgNode = getPathNode( _pathCount ++ );
 		_svgNode.setAttribute( 'd', 'M ' + v1.positionScreen.x + ' ' + v1.positionScreen.y + ' L ' + v2.positionScreen.x + ' ' + v2.positionScreen.y + ' L ' + v3.positionScreen.x + ',' + v3.positionScreen.y + ' L ' + v4.positionScreen.x + ',' + v4.positionScreen.y + 'z' );
@@ -462,7 +479,7 @@ THREE.SVGRenderer = function () {
 
 		if ( material.wireframe ) {
 
-			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.__styleString + '; stroke-width: ' + material.wireframe_linewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframe_linecap + '; stroke-linejoin: ' + material.wireframe_linejoin );
+			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.__styleString + '; stroke-width: ' + material.wireframeLinewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframeLinecap + '; stroke-linejoin: ' + material.wireframeLinejoin );
 
 		} else {
 

@@ -1,16 +1,14 @@
- 
 
-<audio id="audio" autobuffer="">
-<source src="audios/1.ogg" type="audio/ogg; codecs=vorbis"> 
-</audio>
- 
-  <script type="text/javascript" >
-    function message(content,id,parent_id)
+
+
+<script type="text/javascript" >
+  function message(content,id,parent_id,depth,position_x)
 {
   this.content=content;
   this.id=id;
   this.parent_id=parent_id;
-  this.position=null;
+  this.depth=depth;
+  this.position_x=position_x;
 }
 
 
@@ -21,36 +19,44 @@
 var content;
 var id;
 var parent_id;
- var m;
+var position_x;
+var depth;
 
-    var aOfer = [];
-    var counter=0;
-    <% @messages.each do |message| %>
-      content =   '<%=  escape_javascript( message.content.chop) %>' ;
-       
-      id =   <%=   message.id.to_i %> ;
-      parent_id  =   <%=  0 | message.parent_id.to_i %>  ;
-      
-m=new message(content,id,parent_id);
-      
-      console.log(m);
-      aOfer.push(m);
-      console.log(aOfer[counter].toString()  );
+var m;
 
+var aOfer = [];
+var counter=0;
+<% @messages.each do |message| %>
+  content =   '<%=  escape_javascript( message.content.chop) %>' ;
 
-      counter= counter+1;
-    <% end %>
+  id =   <%=   message.id.to_i %> ;
+  parent_id  =   <%=  if message.parent_id; message.parent_id.to_i; else; -1; end %>;
+    depth      = <%= message.y.to_i %>;
+    position_x=   <%= message.ab_x.to_i %>  ;
 
-    init();
-    </script>
+    m=new message(content,id,parent_id,depth,position_x);
+
+    console.log(m);
+    aOfer.push(m);
+    //console.log(aOfer[counter].toString()  );
 
 
+    counter= counter+1;
+  <% end %>
 
-  <div id="launcher" style="padding-top: 100px; text-align: center">
+ // init();
+  </script>
+
+
+<!--
+   -
+   -  <div id="launcher" style="padding-top: 100px; text-align: center">
+
 
     <span style="cursor:pointer" onclick="start( 0 );">START</span>
 
+   -->
   </div>
 
 
- 
+

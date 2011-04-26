@@ -1,45 +1,37 @@
 /**
  * @author mr.doob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
  *
  * parameters = {
  *  color: <hex>,
- *  map: new THREE.Texture( <Image> ),
  *  opacity: <float>,
- *  blending: THREE.NormalBlending
+ *  map: new THREE.Texture( <Image> ),
+ 
+ *  size: <float>,
+ 
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ 
+ *  vertexColors: <bool>
  * }
  */
 
 THREE.ParticleBasicMaterial = function ( parameters ) {
 
-	this.color = new THREE.Color( 0xffffff );
-	this.map = null;
-	this.opacity = 1;
-	this.blending = THREE.NormalBlending;
+	THREE.Material.call( this, parameters );
 
-	this.offset = new THREE.Vector2(); // TODO: expose to parameters
+	parameters = parameters || {};
 
-	if ( parameters ) {
+	this.color = parameters.color !== undefined ? new THREE.Color( parameters.color ) : new THREE.Color( 0xffffff );
 
-		if ( parameters.color !== undefined ) this.color.setHex( parameters.color );
-		if ( parameters.map !== undefined ) this.map = parameters.map;
-		if ( parameters.opacity !== undefined ) this.opacity  = parameters.opacity;
-		if ( parameters.blending !== undefined ) this.blending = parameters.blending;
+	this.map = parameters.map !== undefined ? parameters.map : null;
 
-	}
+	this.size = parameters.size !== undefined ? parameters.size : 1;
+	this.sizeAttenuation = parameters.sizeAttenuation !== undefined ? parameters.sizeAttenuation : true;
+
+	this.vertexColors = parameters.vertexColors !== undefined ? parameters.vertexColors : false;
 
 };
 
-THREE.ParticleBasicMaterial.prototype = {
-
-	toString: function () {
-
-		return 'THREE.ParticleBasicMaterial (<br/>' +
-			'color: ' + this.color + '<br/>' +
-			'map: ' + this.map + '<br/>' +
-			'opacity: ' + this.opacity + '<br/>' +
-			'blending: ' + this.blending + '<br/>' +
-			')';
-
-	}
-
-};
+THREE.ParticleBasicMaterial.prototype = new THREE.Material();
+THREE.ParticleBasicMaterial.prototype.constructor = THREE.ParticleBasicMaterial;

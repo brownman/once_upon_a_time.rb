@@ -3,18 +3,17 @@ var GeometryUtils = {
 	merge: function ( geometry1, object2 /* mesh | geometry */ ) {
 
 		var isMesh = object2 instanceof THREE.Mesh,
-		vertexPosition = geometry1.vertices.length,
-		facePosition = geometry1.faces.length,
-		uvPosition = geometry1.uvs.length,
+		vertexOffset = geometry1.vertices.length,
+		uvPosition = geometry1.faceVertexUvs[ 0 ].length,
 		geometry2 = isMesh ? object2.geometry : object2,
 		vertices1 = geometry1.vertices,
 		vertices2 = geometry2.vertices,
 		faces1 = geometry1.faces,
 		faces2 = geometry2.faces,
-		uvs1 = geometry1.uvs,
-		uvs2 = geometry2.uvs;
+		uvs1 = geometry1.faceVertexUvs[ 0 ],
+		uvs2 = geometry2.faceVertexUvs[ 0 ];
 
-		isMesh && object2.autoUpdateMatrix && object2.updateMatrix();
+		isMesh && object2.matrixAutoUpdate && object2.updateMatrix();
 
 		for ( var i = 0, il = vertices2.length; i < il; i ++ ) {
 
@@ -30,20 +29,20 @@ var GeometryUtils = {
 
 		for ( i = 0, il = faces2.length; i < il; i ++ ) {
 
-			var face = faces2[ i ], faceCopy, normal,
-			faceVertexNormals = face.vertexNormals;
+			var face = faces2[ i ], faceCopy, normal, color,
+			faceVertexNormals = face.vertexNormals,
+			faceVertexColors = face.vertexColors;
 
 			if ( face instanceof THREE.Face3 ) {
 
-				faceCopy = new THREE.Face3( face.a + vertexPosition, face.b + vertexPosition, face.c + vertexPosition );
+				faceCopy = new THREE.Face3( face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset );
 
 			} else if ( face instanceof THREE.Face4 ) {
 
-				faceCopy = new THREE.Face4( face.a + vertexPosition, face.b + vertexPosition, face.c + vertexPosition, face.d + vertexPosition );
+				faceCopy = new THREE.Face4( face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset );
 
 			}
 
-			faceCopy.centroid.copy( face.centroid );
 			faceCopy.normal.copy( face.normal );
 
 			for ( var j = 0, jl = faceVertexNormals.length; j < jl; j ++ ) {
@@ -53,7 +52,18 @@ var GeometryUtils = {
 
 			}
 
+			faceCopy.color.copy( face.color );
+
+			for ( var j = 0, jl = faceVertexColors.length; j < jl; j ++ ) {
+
+				color = faceVertexColors[ j ];
+				faceCopy.vertexColors.push( color.clone() );
+
+			}
+
 			faceCopy.materials = face.materials.slice();
+
+			faceCopy.centroid.copy( face.centroid );
 
 			faces1.push( faceCopy );
 

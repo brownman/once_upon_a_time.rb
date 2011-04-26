@@ -1,44 +1,30 @@
 <% content_for :head do %>
-  <%= render "style1" %>
-  <%= javascript_include_tag     'js/libs/ThreeCanvas.js',
-    'js/libs/three/extras/ImageUtils.js',
 
-    'js/geometry/Sphere.js',
-    'js/geometry/Plane.js',
-    'js/geometry/Asteroid.js',
+              <%= render "style1" %>   
 
-    'js/Sequencer.js',
-    'js/effects/Effect.js',
-    'js/effects/Part1Effect.js',
-    'js/effects/Part2Effect.js',
-    'js/effects/Part3Effect.js',
-    'js/effects/Part4Effect.js',
-    'js/effects/Part5Effect.js',
-    'js/effects/Part6Effect.js',
-    'js/effects/Part7Effect.js',
-    'js/effects/Part8Effect.js',
-    'js/effects/ClearEffect.js',
-    'js/effects/FadeInEffect.js',
-    'js/effects/FadeOutEffect.js',
-    'js/Main.js'
-  %>
+  <%= javascript_include_tag  'build/Three.js','js/RequestAnimationFrame.js'  %>
 <% end %>
 
 <% content_for :body do %>
 
 
+   <div id='example2' width="145" height="100" background-color="#fff000">
+     </div>
 
-
-  <% title "Messages" %>
-
-  <%= render "jstuff" %> 
-
+      <%= render "jstuff" %>
+   
+   
+        <% title "Messages" %>
+   
+   
+       <%= render "example2" %>       
 
   <div id='railstuff1' >
 
     <%= nested_messages @messages.arrange(:order => :created_at) %>
 
-    <%= render "form" %>
+
+    <%= render "form" %>    
 
 
 
@@ -49,7 +35,10 @@
 
         <th>Content</th>
         <th>id</th>
+
         <th>parent_id</th>
+        <th>x_offset</th>
+        <th>y_offset</th>
         <th></th>
         <th></th>
         <th></th>
@@ -60,7 +49,11 @@
 
           <td><%= message.content %></td>
           <td><%= message.id %></td>
+
           <td><%= message.parent_id %></td>
+
+          <td><%= message.x %></td>
+          <td><%= message.y %></td>
           <td><%= link_to 'Show', message %></td>
           <!--
              -<td><%= link_to 'Edit', edit_message_path(message) %></td>
@@ -72,7 +65,14 @@
       <% end %>
     </table>
 
+
   </div>
 
 
-<% end %>
+
+
+
+<% end %>     
+
+
+
