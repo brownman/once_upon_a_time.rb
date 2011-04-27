@@ -23,9 +23,11 @@ gem 'ancestry'
 
 #group :development do
 #  gem 'rspec-rails', '2.5.0'
-#end
+#end               
+gem 'jquery-rails'
+gem 'jasmine'   , :group => [:test, :development]
 
-
+#gem "jasmine", :git => "git://github.com/ahaller/jasmine-gem.git", :submodules => true
 group :development do
 
 gem 'awesome_print'
@@ -37,7 +39,9 @@ gem "ruby-debug19"
 end
 
 group :test do
-#  gem 'rspec', '2.5.0'
+
+#  gem 'rspe
+#  c', '2.5.0'
   #
 gem 'factory_girl_rails'
 gem 'webrat'
