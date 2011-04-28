@@ -2,25 +2,12 @@
 
          
 
-    <%= stylesheet_link_tag "style1" %>
+    <%= stylesheet_link_tag "application" %>
+ <%= javascript_include_tag  'build/Three.js','js/RequestAnimationFrame.js'  %>
 
-    <%= javascript_include_tag :defaults %>                       
-        <%= javascript_include_tag "js1/Modernizr.js", "js1/RequestAnimationFrame.js","js1/Three.js","js1/Surface.js"  %>
 
-    <!-- Analytics -->
-    <script type="text/javascript">
 
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-13024693-3']);
-        _gaq.push(['_trackPageview']);
 
-        (function() {
-         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-         })();
-         </script>
-        
 <% end %>
 
 
@@ -40,19 +27,13 @@
 
 
 
-
-
-
+       
 <% content_for :body do %>
 
-             <div id="container">
-
-            <a href="http://aerotwist.com" title="Back to Aerotwist"><span>&larr;</span>Back to Aerotwist</a>
-
-        </div>
+        
 
                 
-   <div id='example2' width="145" height="100" background-color="#fff000">
+   <div id='container0' width="145" height="100" background-color="#fff000">
      </div>
 
       <%= render "jstuff" %>
@@ -61,11 +42,7 @@
         <% title "Messages" %>
    
    
-       <%= render "example3" %>       
-       <!--
-          -<%= render "example2" %>       
-          -->
-
+          <%= render "example2" %>       
   <div id='railstuff1' >
 
     <%= nested_messages @messages.arrange(:order => :created_at) %>
@@ -84,7 +61,7 @@
         <th>id</th>
 
         <th>parent_id</th>
-        <th>x_offset</th>
+        <th>ab_x</th>
         <th>y_offset</th>
         <th></th>
         <th></th>
@@ -99,7 +76,7 @@
 
           <td><%= message.parent_id %></td>
 
-          <td><%= message.x %></td>
+          <td><%= message.ab_x %></td>
           <td><%= message.y %></td>
           <td><%= link_to 'Show', message %></td>
           <!--

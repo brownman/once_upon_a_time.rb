@@ -2,13 +2,13 @@
 
 
 <script type="text/javascript" >
-  function message(content,id,parent_id,depth,position_x)
+  function message(content,id,parent_id,y,ab_x)
 {
   this.content=content;
   this.id=id;
   this.parent_id=parent_id;
-  this.depth=depth;
-  this.position_x=position_x;
+  this.y=y;
+  this.ab_x=ab_x;
 }
 
 
@@ -19,8 +19,8 @@
 var content;
 var id;
 var parent_id;
-var position_x;
-var depth;
+var ab_x;
+var y;
 
 var m;
 
@@ -31,10 +31,10 @@ var counter=0;
 
   id =   <%=   message.id.to_i %> ;
   parent_id  =   <%=  if message.parent_id; message.parent_id.to_i; else; -1; end %>;
-    depth      = <%= message.y.to_i %>;
-    position_x=   <%= message.ab_x.to_i %>  ;
+    y      = <%= message.y.to_i %> + 1;
+    ab_x=   <%= message.ab_x.to_i %>  ;
 
-    m=new message(content,id,parent_id,depth,position_x);
+    m=new message(content,id,parent_id,y,ab_x);
 
     console.log(m);
     aOfer.push(m);
