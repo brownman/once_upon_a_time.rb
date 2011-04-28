@@ -95,3 +95,11 @@ context.fill();
     <!--
         -<%= render "style1" %>
         -->    
+ <!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Surface</title>
+        <link href="style1.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>  
