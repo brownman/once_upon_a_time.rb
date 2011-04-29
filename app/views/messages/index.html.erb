@@ -1,13 +1,23 @@
 <% content_for :head do %>
 
+
          
 
-    <%= stylesheet_link_tag "application" %>
- <%= javascript_include_tag  'build/Three.js','js/RequestAnimationFrame.js'  %>
 
 
 
+         
 
+             
+
+         
+             <%= stylesheet_link_tag "application" %>
+             
+             <!--
+                -<%= render "example5h" %>       
+                -->
+
+    
 <% end %>
 
 
@@ -30,25 +40,34 @@
        
 <% content_for :body do %>
 
+        <% title "Messages" %>
         
 
+    <!--                 
+       -width="145" height="100" background-color="#fff000"
+       -->
                 
-   <div id='container0' width="145" height="100" background-color="#fff000">
-     </div>
+ 
+  <div id='container0'  class="container0"  >
+     </div>             
 
       <%= render "jstuff" %>
    
    
-        <% title "Messages" %>
+
    
    
-          <%= render "example2" %>       
+          <%= render "example5b" %>       
+        
+
   <div id='railstuff1' >
 
     <%= nested_messages @messages.arrange(:order => :created_at) %>
 
 
-    <%= render "form" %>    
+    <!--
+       -<%= render "form" %>    
+       -->
 
 
 
@@ -95,8 +114,7 @@
 
 
 
-
 <% end %>     
-
+ 
 
 

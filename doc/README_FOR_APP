@@ -108,4 +108,4 @@ context.fill();
 
     <%= javascript_include_tag :defaults %>                       
         <%= javascript_include_tag "js1/Modernizr.js", "js1/RequestAnimationFrame.js","js1/Three.js","js1/Surface.js"  %>
-           
+            <%= javascript_include_tag  'build/Three.js','js/RequestAnimationFrame.js'  %>   

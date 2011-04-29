@@ -17,15 +17,26 @@ a {
   height: 0;
   overflow: hidden;
 }
+  #container0 {
+    
+  width: 50%;
+  height: 50%;
+  margin: 0 auto;
+  background-color: #FFF;
+  padding: 20px 40px;
+  border: solid 1px black;
+  margin-top: 20px;  
+background:#ddffdd;
 
-#container {
+}   
+ #container {
   width: 75%;
   margin: 0 auto;
   background-color: #FFF;
   padding: 20px 40px;
   border: solid 1px black;
   margin-top: 20px;
-}
+}   
 
 #flash_notice, #flash_error, #flash_alert {
   padding: 5px 8px;

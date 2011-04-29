@@ -1,4 +1,4 @@
-var Recipe = function(attributes) {
+ var Recipe = function(attributes) {
   this.attributes = attributes || {};
   this.ingredients = this.attributes.ingredients || [];  
 };
@@ -10,4 +10,4 @@ Recipe.prototype.price = function() {
   };
   return price;
 }
-
+       

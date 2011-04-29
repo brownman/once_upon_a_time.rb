@@ -47,17 +47,17 @@ context.fill();
 
     var rand = Math.random() * Math.PI * 2;
     greetings[j].position =  new THREE.Vector3( );
-    greetings[j].position.x =  greetings[j].ab_x * (-8) ;
+    greetings[j].position.x =  greetings[j].ab_x * (-2) ;
 
     greetings[j].position.y = greetings[j].y * (42);
 
-    greetings[j].position.z = 100;//Math.sin( rand ) * amplitude ;
+    greetings[j].position.z = 0;//Math.sin( rand ) * amplitude ;
     if(greetings[j].id == "23")
     {
       
         greetings[j].position.x = 0;
         greetings[j].position.y = 0;
-        greetings[j].position.z = 100;
+        greetings[j].position.z = 0;
     
     }
   }
@@ -88,6 +88,8 @@ function init() {
 
   camera = new THREE.Camera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
   camera.position.z = 100;
+  camera.position.y = -100;
+  camera.position.x = 0;
 
   scene = new THREE.Scene();
 // renderer
@@ -197,27 +199,6 @@ scene.addObject( t_particle ); //ADD TEXTBOX
 
 
 
-function shit2()
-{
-  var geometry = new THREE.Geometry();
-
-  for ( var i = 0; i < 100; i ++ ) {
-
-    particle = new THREE.Particle( material );
-    particle.position.x = Math.random() * 2 - 1;
-    particle.position.y = Math.random() * 2 - 1;
-    particle.position.z = Math.random() * 2 - 1;
-    particle.position.normalize();
-    particle.position.multiplyScalar( Math.random() * 10 + 450 );
-    particle.scale.x = particle.scale.y = 5;
-    scene.addObject( particle );
-
-    geometry.vertices.push( new THREE.Vertex( particle.position ) );
-
-    }
-}
-    // lines
-
     var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5 } ) );
     scene.addObject( line );
 
@@ -275,9 +256,9 @@ function animate() {
 
 function render() {
 
-  camera.position.x += ( mouseX - camera.position.x ) * .05;
-  camera.position.y += ( - mouseY + 200 - camera.position.y ) * .05;
-   camera.position.z = -100;
+//  camera.position.x += ( mouseX - camera.position.x ) * .05;
+ // camera.position.y += ( - mouseY + 200 - camera.position.y ) * .05;
+//   camera.position.z = 200;
   renderer.render( scene, camera );
 
 }   
