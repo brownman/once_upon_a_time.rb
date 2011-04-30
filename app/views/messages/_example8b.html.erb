@@ -1,42 +1,44 @@
-                         <div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - Object3D::lookAt() demo</div>
+                         <!--
+                            -<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - Object3D::lookAt() demo</div>
+                            -->
 
-        <script type="text/javascript" src="javascripts/build/Three.js"></script>
+        <!--
 
-        <script type="text/javascript" src="javascripts/js/RequestAnimationFrame.js"></script>
+           -<script type="text/javascript" src="javascripts/build/custom/ThreeCanvas.js"></script>
+           -->
+              
+           <script type="text/javascript" src="javascripts/js/RequestAnimationFrame.js"></script>
+           <script type="text/javascript" src="javascripts/Three.js"></script>
+   
+     
         
-        <script type="text/javascript" src="javascripts/js/Stats.js"></script>
+        <!--
+           -<script type="text/javascript" src="javascripts/js/Stats.js"></script>
+           -->
         <script type="text/javascript" src="javascripts/shared/TextBox.js"></script>
 
         <script type="text/javascript">
+   
+    var camera, scene, renderer,
+    geometry, material, mesh;
+          var textboxes= null;
 
-            var container, stats;
+    init();
+    animate();
 
-            var camera, scene, renderer;
+    function init() {
 
-            var mesh, zmesh, lightMesh, geometry, target;
+        camera = new THREE.Camera( 65, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 500;
 
-            var mouseX = 0, mouseY = 0;
+        scene = new THREE.Scene();
 
-            var windowHalfX = window.innerWidth / 2;
-            var windowHalfY = window.innerHeight / 2;
-  var textboxes = null;
-            document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        geometry = new THREE.Cube( 200, 200, 200 );
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
 
-            init();
-            animate();
-
-
-            function init() {
-
-                container = document.getElementById( 'container0' );//createElement
-                document.body.appendChild( container );
-
-                camera = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
-                camera.position.z = 3200;
-
-                scene = new THREE.Scene();
-
-  textboxes = new Textbox(aOfer);
+        mesh = new THREE.Mesh( geometry, material );
+        scene.addObject( mesh );
+                     textboxes = new Textbox(aOfer);
 textboxes.draw_mesh(scene);
                   
 
@@ -46,66 +48,30 @@ textboxes.draw_mesh(scene);
   textboxes.draw_textbox(scene);
   textboxes.draw_line_between_textbox(scene);
   console.log("draw to console");
-  //textboxes.to_scene_add_textboxes(scene);
-                
-                scene.matrixAutoUpdate = true;//false;
+  //textboxes.to_scene_add_textboxes(scene);  
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
 
-                renderer =
-                  
-                  new THREE.WebGLRenderer();
-                 // new THREE.CanvasRenderer();
+        document.body.appendChild( renderer.domElement );
 
-                  //new THREE.WebGLRenderer();
-                renderer.setSize( window.innerWidth, window.innerHeight );
-                renderer.sortObjects = false;
-                container.appendChild( renderer.domElement );
+    }
 
-                stats = new Stats();
-                stats.domElement.style.position = 'absolute';
-                stats.domElement.style.top = '0px';
-                stats.domElement.style.zIndex = 100;
-                container.appendChild( stats.domElement );
+    function animate() {
 
-            }
+        // Include examples/js/RequestAnimationFrame.js for cross-browser compatibility.
+  requestAnimationFrame( animate );
+        render();
 
-            function onDocumentMouseMove(event) {
+    }
 
-                mouseX = ( event.clientX - windowHalfX ) * 10;
-                mouseY = ( event.clientY - windowHalfY ) * 10;
+    function render() {
 
-            }
+        mesh.rotation.x += 0.01;
+        mesh.rotation.y += 0.02;
 
-            //
+        renderer.render( scene, camera );
 
-            function animate() {
-
-                requestAnimationFrame( animate );
-
-                render();
-                stats.update();
-
-            }
-
-            function render() {
-               //   console.log(target.position);
-                camera.position.x += ( mouseX - camera.position.x ) * .05;
-                camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
-                var time = new Date().getTime() * 0.0005;
-
-                target.position.x = 0;//Math.sin( time * 0.7 ) * 2000;
-                target.position.y = 0;//Math.cos( time * 0.5 ) * 2000;
-                target.position.z = 0;//Math.cos( time * 0.3 ) * 2000;
-
-                for ( var i = 0, l = scene.objects.length; i < l; i ++ ) {
-
-                    scene.objects[ i ].lookAt( target.position );
-
-                }
-
-                renderer.render( scene, camera );
-
-            }
-
+    }
+                     
         </script>
  

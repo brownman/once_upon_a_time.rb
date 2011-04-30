@@ -18,29 +18,29 @@ Textbox.prototype.long_story = function() {
 }
 
 
-
-Textbox.prototype.set_position =  function() {
-  var greetings = this.greetings;
-  //SET TEXTBOX POSITION
-  for ( var j = 0; j < greetings.length; j ++ ) {
-
     //var resolution = 8;
     //var amplitude = 100 + ( j * ( Math.random() * 200 + 10 ) );
     //var size = 360 / resolution;
 
     //var rand = Math.random() * Math.PI * 2;
     // greetings[j].position =  new THREE.Vector3( );
+    
+Textbox.prototype.set_position =  function() {
+  var greetings = this.greetings;
+  //SET TEXTBOX POSITION
+  for ( var j = 0; j < greetings.length; j ++ ) {
 
+   
     greetings[j].position_x =  
-    Math.random() * 4000 - 2000;
-      //greetings[j].ab_x * (-200) ;
+//    Math.random() * 4000 - 2000;
+      greetings[j].ab_x * (-2) ;
     greetings[j].position_y = 
-    Math.random() * 4000 - 2000;
-    //greetings[j].y * (420);
+    //Math.random() * 4000 - 2000;
+    greetings[j].y * (92);
 //    .position_z = 0;//Math.sin( rand ) * amplitude ;
     greetings[j].position_z = 
-
-    Math.random() * 4000 - 2000;
+     0;
+   // Math.random() * 4000 - 2000;
     if(greetings[j].id == "23")
     {
       greetings[j].position_x = 0;
@@ -86,9 +86,6 @@ Textbox.prototype.draw_textbox = function(scene)
     var t_particle= this.createText(str, size, x, y, z); 
 
 
-                    t_particle.scale.x = t_particle.scale.y = t_particle.scale.z = 10;//Math.random() * 4 + 2;
-    ////particle = new THREE.Particle( textMaterial );
-
     scene.addObject( t_particle ); //ADD TEXTBOX
 
 
@@ -98,17 +95,13 @@ Textbox.prototype.draw_textbox = function(scene)
 //LINES:      CONNECT TEXTBOXES
 
 Textbox.prototype.draw_line_between_textbox = function(scene) {
-            var geometry = new THREE.Geometry(); 
-  var linesMaterial = 
-    
-    //new THREE.LineColorMaterial( 0x000000, 0.2 );
-            
-            
-
-      new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5 } );
-  var line = new THREE.Line( geometry, linesMaterial
-      );
+  
+  
   var greetings  =     this.greetings;
+  var geometry = null;//new THREE.Geometry(); 
+  var linesMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5 } );
+
+
   for(var  j=0; j<greetings.length ; j++)
   {
     var    str_p='draw line from parent:'+ greetings[j].id;
@@ -138,10 +131,12 @@ Textbox.prototype.draw_line_between_textbox = function(scene) {
   geometry.vertices.push( new THREE.Vertex( vec1 ) );
   geometry.vertices.push( new THREE.Vertex( vec2 ) );
 
-        line.scale.z = line.scale.x= line.scale.y = 1.0; 
 
 
-console.log("TEXTBOXES line.position"+ line.position);   
+    
+ var line = new THREE.Line( geometry, linesMaterial);
+        line.scale.z = line.scale.x= line.scale.y = 1.0;
+//console.log("TEXTBOXES line.position"+ line.position);   
         scene.addObject( line ); //ADD LINE
       }//if
 
@@ -188,8 +183,8 @@ Textbox.prototype.createText = function(string, size, x, y, z) {
 
   string = x.toString()+"," +y.toString() +" " + string;
   var canvas = document.createElement( 'canvas' );
-  canvas.width = size*190;
-  canvas.height = 850;
+  canvas.width = size*19;
+  canvas.height = 85;
   canvas.needsUpdate = true;
 
   var context = canvas.getContext( '2d' );
@@ -227,7 +222,6 @@ Textbox.prototype.draw_mesh = function(scene)
                     var mesh = new THREE.Mesh( geometry, material );
                     mesh.position.x = Math.random() * 4000 - 2000;
                     mesh.position.y = Math.random() * 4000 - 2000;
-                    
                     mesh.position.z = Math.random() * 4000 - 2000;
 
                     mesh.scale.x = mesh.scale.y = mesh.scale.z = 1;//Math.random() * 4 + 2;
@@ -236,7 +230,15 @@ Textbox.prototype.draw_mesh = function(scene)
                 }    
 }
 //}
-
+                    
+                   // t_particle.scale.x = t_particle.scale.y = t_particle.scale.z = 10;//Math.random() * 4 + 2;
+    ////particle = new THREE.Particle( textMaterial );
+ 
 //TextBox.prototype = new THREE.Geometry();
 //TextBox.prototype.constructor = TextBox;
-
+                       
+    
+    //new THREE.LineColorMaterial( 0x000000, 0.2 );
+            
+            
+                    
