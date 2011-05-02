@@ -4,6 +4,7 @@ one:
 two:
   content: MyText
 
+
 # == Schema Information
 #
 # Table name: messages
@@ -15,5 +16,6 @@ two:
 #  ancestry   :string(255)
 #  x          :integer
 #  y          :integer
+#  ab_x       :integer
 #
 

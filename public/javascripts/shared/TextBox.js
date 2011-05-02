@@ -5,7 +5,7 @@
 var TextBox = function(greetings) {     
   //THREE = THREE;
   this.random_position = false;
-  this.text_color = "rgb(255, 255, 255)";
+  this.text_color = "rgb(255, 255, 255)";   
   this.factor_x = 8;
   this.factor_y = -900;
   this.greetings = greetings || {};

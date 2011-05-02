@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <div class="myribbon">
+      <a href="http://github.com/brownman/once_upon_a_time.rb">
+        <span>Fork me on GitHub</span>
+      </a>
+    </div>                           
+
+
+
+    <% if content_for?(:head) %>
+
+
+
+      <%= yield(:head)  %>
+
+
+
+
+    <% else     %>
+
+
+      console.log("no content_for: head");
+
+        <%= yield  %>
+    <% end %>
+
+
+  </head>  
+
+
+  <body>
+
+    <% if content_for?(:body) %>
+      <%= yield(:body) %>
+
+      <% else   #default sidebar content...  %>
+
+
+        <%= yield  %>
+      <% end %>
+    </body>
+
+  </html>

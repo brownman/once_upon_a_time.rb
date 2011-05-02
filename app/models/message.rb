@@ -4,6 +4,7 @@ class Message < ActiveRecord::Base
 
 end
 
+
 # == Schema Information
 #
 # Table name: messages
@@ -15,5 +16,6 @@ end
 #  ancestry   :string(255)
 #  x          :integer
 #  y          :integer
+#  ab_x       :integer
 #
 

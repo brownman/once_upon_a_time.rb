@@ -7,6 +7,7 @@ class UserTest < ActiveSupport::TestCase
   end
 end
 
+
 # == Schema Information
 #
 # Table name: users
@@ -16,5 +17,9 @@ end
 #  email      :string(255)
 #  created_at :datetime
 #  updated_at :datetime
+#  position_x :integer
+#  position_y :integer
+#  position_z :integer
+#  status     :string(255)
 #
 
