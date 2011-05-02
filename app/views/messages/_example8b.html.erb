@@ -28,8 +28,11 @@
 
     function init() {
 
-        camera = new THREE.Camera( 65, window.innerWidth / window.innerHeight, 1, 10000 );
-        camera.position.z = 500;
+        camera = new THREE.Camera( 85, window.innerWidth / window.innerHeight, 1, 199900 );
+
+        camera.position.z = 1500;
+        camera.position.y = -100;
+        camera.position.x = 0;
 
         scene = new THREE.Scene();
 
@@ -38,7 +41,7 @@
 
         mesh = new THREE.Mesh( geometry, material );
         scene.addObject( mesh );
-                     textboxes = new Textbox(aOfer);
+                     textboxes = new TextBox(aOfer);
 textboxes.draw_mesh(scene);
                   
 

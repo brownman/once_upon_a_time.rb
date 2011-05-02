@@ -2,13 +2,17 @@
 
 
 
-var Textbox = function(greetings) {     
+var TextBox = function(greetings) {     
   //THREE = THREE;
+  this.random_position = false;
+  this.text_color = "rgb(255, 255, 255)";
+  this.factor_x = 8;
+  this.factor_y = -900;
   this.greetings = greetings || {};
   this.content = this.greetings.content || [];  
 };
 
-Textbox.prototype.long_story = function() {
+TextBox.prototype.long_story = function() {
 
   var long_story = "";
   for (var i = this.content.length - 1; i >= 0; i--){
@@ -25,22 +29,33 @@ Textbox.prototype.long_story = function() {
     //var rand = Math.random() * Math.PI * 2;
     // greetings[j].position =  new THREE.Vector3( );
     
-Textbox.prototype.set_position =  function() {
+TextBox.prototype.set_position =  function() {
   var greetings = this.greetings;
   //SET TEXTBOX POSITION
   for ( var j = 0; j < greetings.length; j ++ ) {
 
-   
+  if(!this.random_position) 
+  {
+  
     greetings[j].position_x =  
-//    Math.random() * 4000 - 2000;
-      greetings[j].ab_x * (-2) ;
+      greetings[j].ab_x * this.factor_x  ;
     greetings[j].position_y = 
-    //Math.random() * 4000 - 2000;
-    greetings[j].y * (92);
-//    .position_z = 0;//Math.sin( rand ) * amplitude ;
+    greetings[j].y * this.factor_y ;
     greetings[j].position_z = 
-     0;
-   // Math.random() * 4000 - 2000;
+     0;              
+  }
+  else
+  {
+  
+    greetings[j].position_x =  
+Math.random() * 4000 - 2000;
+    greetings[j].position_y = 
+
+Math.random() * 4000 - 2000;
+    greetings[j].position_z = 
+
+Math.random() * 4000 - 2000;
+  }
     if(greetings[j].id == "23")
     {
       greetings[j].position_x = 0;
@@ -64,13 +79,20 @@ Textbox.prototype.set_position =  function() {
 
 
 
+TextBox.prototype.draw_all = function(scene)
+{
+   console.log(textboxes);
+  textboxes.set_position();  
+  //add some textboxes
+  textboxes.draw_textbox(scene);
+  textboxes.draw_line_between_textbox(scene);       
+}
 
 
 
 
 
-
-Textbox.prototype.draw_textbox = function(scene)
+TextBox.prototype.draw_textbox = function(scene)
 {
 
   var greetings  =     this.greetings;
@@ -94,7 +116,7 @@ Textbox.prototype.draw_textbox = function(scene)
 
 //LINES:      CONNECT TEXTBOXES
 
-Textbox.prototype.draw_line_between_textbox = function(scene) {
+TextBox.prototype.draw_line_between_textbox = function(scene) {
   
   
   var greetings  =     this.greetings;
@@ -178,7 +200,7 @@ Textbox.prototype.draw_line_between_textbox = function(scene) {
  */
 
 
-Textbox.prototype.createText = function(string, size, x, y, z) {
+TextBox.prototype.createText = function(string, size, x, y, z) {
 
 
   string = x.toString()+"," +y.toString() +" " + string;
@@ -188,8 +210,9 @@ Textbox.prototype.createText = function(string, size, x, y, z) {
   canvas.needsUpdate = true;
 
   var context = canvas.getContext( '2d' );
-  context.font = 14+"px Georgia";
-  context.fillStyle = "rgb(255, 255, 255)";
+  context.font = 51+"px Georgia";
+  context.fillStyle = this.text_color;
+
   context.textAlign = "center";
   context.fillText( string, canvas.width / 2, 25 );
 
@@ -198,7 +221,7 @@ Textbox.prototype.createText = function(string, size, x, y, z) {
   var texture = new THREE.Texture( canvas );
 
   texture.needsUpdate = true;
-  var textMaterial = new THREE.ParticleBasicMaterial( { map: texture, blending: THREE.AdditiveBlending } );
+  var textMaterial = new THREE.ParticleBasicMaterial( { map: texture, blending: THREE.NormalBlending } );
 
   particle = new THREE.Particle( textMaterial );
   particle.position.y = y;
@@ -209,7 +232,7 @@ Textbox.prototype.createText = function(string, size, x, y, z) {
 }
 
 
-Textbox.prototype.draw_mesh = function(scene)
+TextBox.prototype.draw_mesh = function(scene)
 {
                  var geometry = new THREE.Cylinder( 3, 10, 0.1, 100 );
                 var material = new THREE.MeshNormalMaterial( { shading: THREE.SmoothShading } );

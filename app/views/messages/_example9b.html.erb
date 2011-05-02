@@ -1,12 +1,16 @@
-<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - Object3D::lookAt() demo</div> 
+<!--
+   -<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - Object3D::lookAt() demo</div> 
+   -->
 
-<script type="text/javascript" src="javascipts/build/custom/ThreeWebGL.js"></script> 
+<script type="text/javascript" src="javascripts/Three.js"></script> 
 
 <script type="text/javascript" src="javascripts/js1/RequestAnimationFrame.js"></script> 
+
 <script type="text/javascript" src="javascripts/js/Stats.js"></script> 
+<script type="text/javascript" src="javascripts/shared/TextBox.js"></script> 
 
 <script type="text/javascript"> 
-
+                        var textboxes = null;
   var container, stats;
 
   var camera, scene, renderer;
@@ -27,7 +31,7 @@
   function init() {
 
     container = document.getElementById( 'container0' );
-    document.body.appendChild( container );
+   // document.body.appendChild( container );
 
     camera = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.z = 3200;
@@ -63,6 +67,9 @@
     stats.domElement.style.top = '0px';
     stats.domElement.style.zIndex = 100;
     container.appendChild( stats.domElement );
+
+    textboxes = new TextBox(aOfer);
+    textboxes.draw_all(scene);
 
   }
 
